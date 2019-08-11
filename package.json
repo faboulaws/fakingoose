@@ -1,0 +1,65 @@
+{
+  "name": "mongoose-data-mocker",
+  "version": "1.0.0",
+  "description": "Data mocker for mongoose schema",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npm run test:v5 && npm run test:v4 ",
+    "test:any": "npx mocha test/* ",
+    "test:v3": "npm r mongoose && npm i mongoose@3.x && npx mocha test/*",
+    "test:v4": "npm r mongoose && npm i mongoose@4.x && npx mocha test/*",
+    "test:v5": "npm r mongoose && npm i mongoose@5.x && npx mocha test/*",
+    "lint": "npx eslint lib/*.js test/*js",
+    "lint:fix": "npm run lint -- --fix",
+    "version:inc": "npm version patch && git push && git push --tags",
+    "npm:pub": "npm publish --registry=https://registry.npmjs.org/ --access=public",
+    "pub": "npm run version:inc && npm run npm:pub",
+    "coverage": "nyc npm test",
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "cover": "npm run coverage && npm run coveralls && rm -rf ./coverage"
+  },
+  "keywords": [
+    "dummy",
+    "mocker"
+  ],
+  "author": "Lod Lawson-Betum <faboulaws@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bson-objectid": "^1.3.0",
+    "chance": "^1.0.18",
+    "lodash.set": "^4.3.2",
+    "mongoose": "^4.13.19"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
+    "coveralls": "^3.0.0",
+    "eslint": "^4.18.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "mocha-lcov-reporter": "^1.3.0",
+    "eslint-plugin-import": "^2.9.0",
+    "nyc": "^11.6.0"
+  },
+  "nyc": {
+    "reporter": [
+      "lcov",
+      "text-summary"
+    ]
+  },
+  "greenkeeper": {
+    "ignore": [
+      "eslint",
+      "eslint-plugin-import",
+      "nock",
+      "nyc",
+      "mocka",
+      "sinon",
+      "webpack",
+      "webpack-cli"
+    ]
+  }
+}
