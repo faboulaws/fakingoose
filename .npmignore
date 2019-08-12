@@ -1,6 +1,8 @@
 .githooks
-webpack.config.js
 .eslintrc
 .idea
 examples
 .nyc_output/
+test
+.travis.yml
+.vscode
