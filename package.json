@@ -1,7 +1,11 @@
 {
-  "name": "mongoose-data-mocker",
+  "name": "fakingoose",
   "version": "1.0.0",
   "description": "Data mocker for mongoose schema",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/faboulaws/fackingoose.git"
+  },
   "main": "index.js",
   "directories": {
     "lib": "lib",
