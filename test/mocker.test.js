@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { expect } = require('chai');
+const get = require('lodash.get');
 const mocker = require('../');
 
 const { Schema } = mongoose;
@@ -7,13 +8,6 @@ const { Schema } = mongoose;
 const allOfType = expectedType => array => array.every(item => (typeof item === expectedType));
 const allInstanceOf = expectedType => array => array.every(item => (item instanceof expectedType));
 const allOfWithProps = expectedProps => array => array.every(item => Object.entries(expectedProps).every(([prop, expectedType]) => (typeof item[prop] === expectedType)));
-
-/**
-todo
-+ schema default
-+ options:
- - string: firstname, lastname, email
-*/
 
 const embedded = new Schema({ name: String, number: Number });
 
@@ -34,6 +28,9 @@ const schemaDef = {
     ofString: [String],
     ofStringWithDef: [{ type: String }],
     ofNumber: [Number],
+    positiveNumber: {
+        type: Number, min: [0, 'Too small'],
+    },
     ofDates: [Date],
     ofBuffer: [Buffer],
     ofBoolean: [Boolean],
@@ -111,6 +108,9 @@ describe('mocker test', () => {
         expect(mock.age).to.be.a('number');
         expect(mock.age).to.be.within(18, 65);
 
+        expect(mock.positiveNumber).to.be.a('number');
+        expect(mock.age).to.be.above(0);
+
         // check numbers array
         expect(mock).to.have.property('ofNumber');
         expect(mock.ofNumber).to.be.an('array');
@@ -120,7 +120,6 @@ describe('mocker test', () => {
         expect(mock).to.have.property('nested');
         expect(mock.nested).to.have.property('stuff').that.is.a('string');
         expect(mock.nested).to.have.property('count').that.is.a('number');
-
 
         // embedded schema
         expect(mock).to.have.property('embedded');
@@ -177,13 +176,56 @@ describe('mocker test', () => {
     });
 
     describe('static values', () => {
-        const stringShema = new Schema({ str: String });
+        const embed = new Schema({ name: String });
+        const stringShema = new Schema({
+            str: { type: String },
+            nested: { name: String },
+            doubleNested: {
+                nested: { name: String }
+            },
+            embedded: embed,
+            doubleEmbed: {
+                nested: embed
+            },
+            ofString: [String],
+            ofObject: [{ name: String }],
+            ofEmbedded: [embed]
+        });
+
+        const staticFields = {
+            str: 'hello',
+            nested: { name: 'nested' },
+            doubleNested: {
+                nested: { name: 'doubleNested' }
+            },
+            embedded: { name: 'embedded' },
+            doubleEmbed: {
+                nested: { name: 'doubleEmbed' }
+            },
+            ofString: ['ofString', 'ofSTring'],
+            ofObject: [{ name: 'ofObject' }, { name: 'ofObject' }],
+            ofEmbedded: [{ name: 'ofEmbedded' }, { name: 'ofEmbedded' }]
+        };
+
         const StringThing = mongoose.model('SomeThing', stringShema);
 
         it('should use static value', () => {
             const thingMocker = mocker(StringThing);
-            const mock = thingMocker.generate({ str: 'hello' });
-            expect(mock.str).to.eql('hello');
+            const mock = thingMocker.generate(staticFields);
+            // expect(mock).to.deep.include(staticFields);
+            const paths = [
+                'str',
+                'nested.name',
+                'doubleNested.nested.name',
+                'embedded.name',
+                'doubleEmbed.nested.name',
+                'ofString',
+                'ofObject',
+                'ofEmbedded'
+            ];
+            paths.forEach(path => {
+                expect(get(mock, path)).to.eql(get(staticFields, path));
+            });
         });
     });
 

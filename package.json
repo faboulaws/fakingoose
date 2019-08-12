@@ -31,6 +31,9 @@
   "dependencies": {
     "bson-objectid": "^1.3.0",
     "chance": "^1.0.18",
+    "lodash.get": "^4.4.2",
+    "lodash.isplainobject": "^4.0.6",
+    "lodash.merge": "^4.6.2",
     "lodash.set": "^4.3.2",
     "mongoose": "^4.13.19"
   },
