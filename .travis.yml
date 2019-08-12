@@ -13,15 +13,15 @@ jobs:
       node_js: lts/*
       script: npm run lint
 
-    - stage: test_v4
+    - stage: test with monggose v4.x
       node_js: lts/*
       script: npm run test:v4
 
-    - stage: test_v5
+    - stage: test with mongoose v5.x
       node_js: lts/*
       script: npm run test:v5
 
-    - stage: test_latest
+    - stage: test mongoose latest
       node_js: lts/*
       script: npm run test
 
