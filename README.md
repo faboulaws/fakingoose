@@ -3,7 +3,7 @@
 [![Greenkeeper badge](https://badges.greenkeeper.io/faboulaws/fakingoose.svg)](https://greenkeeper.io/)
 [![Build Status](https://travis-ci.org/faboulaws/fakingoose.svg?branch=master)](https://travis-ci.org/faboulaws/fakingoose)
 
-An automatic fixture generator for mongoose using the schema definition.
+An automatic fixture generator for mongoose using schema definition.
 
 #  Install
 ```
@@ -15,12 +15,13 @@ npm install fackingoose
 const factory = require('fackingoose');
 const modelFactory = factory(model, options);
 ```
-- model: Mongoose schema object
-- options: Generation options, where the options are in the 
-  - options.\<fieldName\>.value **\<mixed\>**: A static value for each generated fixture
-  - options.\<fieldName\>.value: **\<function\>** a function for generating dynamic a value per item. This function received the mock object as first argument
-  - options.\<fieldName\>.skip **\<boolean\>**: When set would skip the field.
-  - options.\<fieldName\>.type **\<string\>**: The sub-type for this field type. For example <String> schema type supports `email`, `firsname` and `lastname`.
+**Options**
+- model: Mongoose schema object.
+- options: Generation options
+  - options.\<fieldName\>.value **\<mixed\>**: A static value for each generated fixture.
+  - options.\<fieldName\>.value: **\<function\>** a function for generating dynamic a value per item. This function received the mock object as first argument.
+  - options.\<fieldName\>.skip **\<boolean\>**: When set to `true` would skip the field.
+  - options.\<fieldName\>.type **\<string\>**: The sub-type for this field type. For example \<String\> schema type supports `email`, `firsname` and `lastname`.
 
 # Usage example
 ```js
