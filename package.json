@@ -25,7 +25,7 @@
     "pub": "npm run version:inc && npm run npm:pub",
     "coverage": "nyc npm test",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "cover": "npm i mongoose && npm run coverage && npm run coveralls && rm -rf ./coverage && npm r mongoose"
+    "cover": "npm i mongoose && npm run coverage && npm run coveralls"
   },
   "keywords": [
     "mongoose",
