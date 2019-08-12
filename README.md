@@ -8,7 +8,7 @@ An automatic fixture generator for mongoose using schema definition.
 
 #  Install
 ```
-npm install fackingoose
+npm install fakingoose
 ```
 
 # Usage
