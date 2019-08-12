@@ -1,4 +1,7 @@
 # fakingoose
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/faboulaws/fakingoose.svg)](https://greenkeeper.io/)
+
 An automatic fixture generator for mongoose using the schema definition.
 
 #  Install
