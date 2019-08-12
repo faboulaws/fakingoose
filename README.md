@@ -106,6 +106,7 @@ const mock = blogFactory.generate({ author: { fullname: 'John Doe' } });
 - Buffer
 - Embedded
 - Date
+- Map
 
 # Mongoose version Support
 
