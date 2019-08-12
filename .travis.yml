@@ -23,7 +23,7 @@ jobs:
 
     - stage: test mongoose latest
       node_js: lts/*
-      script: npm run test
+      script: npm run test:latest
 
     - stage: coverage
       node_js: 9

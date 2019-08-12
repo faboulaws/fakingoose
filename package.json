@@ -13,10 +13,11 @@
   },
   "scripts": {
     "test": "npx mocha test/*",
-    "test:any": "npx mocha test/* && npm r mongoose",
+    "test:any": "npm t && npm r mongoose",
     "test:v3": "npm r mongoose && npm i mongoose@3.x && npm run test:any",
     "test:v4": "npm r mongoose && npm i mongoose@4.x && npm run test:any",
     "test:v5": "npm r mongoose && npm i mongoose@5.x && npm run test:any",
+    "test:latest": "npm r mongoose && npm i mongoose && npm run test:any",
     "lint": "npx eslint lib/*.js",
     "lint:fix": "npm run lint -- --fix",
     "version:inc": "npm version patch && git push && git push --tags",
