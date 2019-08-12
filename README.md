@@ -109,4 +109,4 @@ const mock = blogFactory.generate({ author: { fullname: 'John Doe' } });
 
 # Mongoose version Support
 
-Version 4.x and 5.x are supported
+Version 4.x and 5.x are supported.

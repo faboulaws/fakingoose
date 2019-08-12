@@ -7,7 +7,8 @@ const { Schema } = mongoose;
 
 const allOfType = expectedType => array => array.every(item => (typeof item === expectedType));
 const allInstanceOf = expectedType => array => array.every(item => (item instanceof expectedType));
-const allOfWithProps = expectedProps => array => array.every(item => Object.entries(expectedProps).every(([prop, expectedType]) => (typeof item[prop] === expectedType)));
+const allOfWithProps = expectedProps => array =>
+    array.every(item => Object.entries(expectedProps).every(([prop, expectedType]) => (typeof item[prop] === expectedType)));
 
 const embedded = new Schema({ name: String, number: Number });
 
@@ -48,14 +49,14 @@ const schemaDef = {
 };
 
 
-if (mongoose.Types['Map']) {
+if (mongoose.Types.Map) {
     Object.assign(schemaDef, {
         map: Map,
         mapOfString: {
             type: Map,
-            of: String
+            of: String,
         },
-    })
+    });
 }
 const schema = new Schema(schemaDef);
 
@@ -68,7 +69,6 @@ describe('mocker test', () => {
         const thingMocker = mocker(Thing, {});
         const _mock = thingMocker.generate();
         const mock = new Thing(_mock);
-        console.log(mock);
         // check string
         expect(mock).to.have.property('name');
         expect(typeof mock.name).to.eql('string');
@@ -160,7 +160,7 @@ describe('mocker test', () => {
         expect(mock.ofMixed).to.be.an('array');
         expect(mock.ofMixed).to.have.lengthOf.above(1);
 
-        if (mongoose.Types['Map']) {
+        if (mongoose.Types.Map) {
             // map
             expect(mock).to.have.property('map');
             expect(mock.map).to.be.an('Map');
@@ -168,11 +168,10 @@ describe('mocker test', () => {
             // map of string
             expect(mock).to.have.property('mapOfString');
             expect(mock.mapOfString).to.be.an('Map');
-            mock.mapOfString.values(value => {
+            mock.mapOfString.values((value) => {
                 expect(value).to.be.a('string');
             });
         }
-
     });
 
     describe('static values', () => {
@@ -181,30 +180,30 @@ describe('mocker test', () => {
             str: { type: String },
             nested: { name: String },
             doubleNested: {
-                nested: { name: String }
+                nested: { name: String },
             },
             embedded: embed,
             doubleEmbed: {
-                nested: embed
+                nested: embed,
             },
             ofString: [String],
             ofObject: [{ name: String }],
-            ofEmbedded: [embed]
+            ofEmbedded: [embed],
         });
 
         const staticFields = {
             str: 'hello',
             nested: { name: 'nested' },
             doubleNested: {
-                nested: { name: 'doubleNested' }
+                nested: { name: 'doubleNested' },
             },
             embedded: { name: 'embedded' },
             doubleEmbed: {
-                nested: { name: 'doubleEmbed' }
+                nested: { name: 'doubleEmbed' },
             },
             ofString: ['ofString', 'ofSTring'],
             ofObject: [{ name: 'ofObject' }, { name: 'ofObject' }],
-            ofEmbedded: [{ name: 'ofEmbedded' }, { name: 'ofEmbedded' }]
+            ofEmbedded: [{ name: 'ofEmbedded' }, { name: 'ofEmbedded' }],
         };
 
         const StringThing = mongoose.model('SomeThing', stringShema);
@@ -221,9 +220,9 @@ describe('mocker test', () => {
                 'doubleEmbed.nested.name',
                 'ofString',
                 'ofObject',
-                'ofEmbedded'
+                'ofEmbedded',
             ];
-            paths.forEach(path => {
+            paths.forEach((path) => {
                 expect(get(mock, path)).to.eql(get(staticFields, path));
             });
         });

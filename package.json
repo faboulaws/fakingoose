@@ -13,7 +13,7 @@
     "test:v3": "npm r mongoose && npm i mongoose@3.x && npx mocha test/*",
     "test:v4": "npm r mongoose && npm i mongoose@4.x && npx mocha test/*",
     "test:v5": "npm r mongoose && npm i mongoose@5.x && npx mocha test/*",
-    "lint": "npx eslint lib/*.js test/*js",
+    "lint": "npx eslint lib/*.js",
     "lint:fix": "npm run lint -- --fix",
     "version:inc": "npm version patch && git push && git push --tags",
     "npm:pub": "npm publish --registry=https://registry.npmjs.org/ --access=public",
@@ -57,12 +57,8 @@
     "ignore": [
       "eslint",
       "eslint-plugin-import",
-      "nock",
       "nyc",
-      "mocka",
-      "sinon",
-      "webpack",
-      "webpack-cli"
+      "mocha"
     ]
   }
 }
