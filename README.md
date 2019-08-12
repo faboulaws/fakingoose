@@ -1,6 +1,7 @@
 # fakingoose
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/faboulaws/fakingoose.svg)](https://greenkeeper.io/)
+[![Build Status](https://travis-ci.org/faboulaws/fakingoose.svg?branch=master)](https://travis-ci.org/faboulaws/fakingoose)
 
 An automatic fixture generator for mongoose using the schema definition.
 
