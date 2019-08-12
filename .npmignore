@@ -3,6 +3,7 @@
 .idea
 examples
 .nyc_output/
+coverage
 test
 .travis.yml
 .vscode
