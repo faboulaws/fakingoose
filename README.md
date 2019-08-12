@@ -13,7 +13,7 @@ npm install fackingoose
 # Usage
 ```js
 const factory = require('fackingoose');
-const modelFactory = factory(model, options);
+const entityFactory = factory(model, options);
 ```
 **Options**
 - model: Mongoose schema object.
