@@ -12,7 +12,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npm run test:v5 && npm run test:v4 ",
+    "test": "npm r mongoose && npm i mongoose && npm run test:any",
     "test:any": "npx mocha test/* && npm r mongoose",
     "test:v3": "npm r mongoose && npm i mongoose@3.x && npm run test:any",
     "test:v4": "npm r mongoose && npm i mongoose@4.x && npm run test:any",
@@ -27,8 +27,12 @@
     "cover": "npm run coverage && npm run coveralls && rm -rf ./coverage"
   },
   "keywords": [
-    "dummy",
-    "mocker"
+    "mongoose",
+    "mongoose dummy",
+    "mongoose data mocker",
+    "mongoose fixture factory ",
+    "mongoose data generator",
+    "mongoose data faker"
   ],
   "author": "Lod Lawson-Betum <faboulaws@gmail.com>",
   "license": "MIT",
