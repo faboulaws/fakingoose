@@ -2,7 +2,9 @@
 An automatic fixture generator for mongoose using the schema definition.
 
 #  Install
-`npm install fackingoose`
+```
+npm install fackingoose
+```
 
 # Usage
 ```js
