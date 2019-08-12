@@ -13,7 +13,7 @@ jobs:
       node_js: lts/*
       script: npm run lint
 
-    - stage: test with monggose v4.x
+    - stage: test with mongoose v4.x
       node_js: lts/*
       script: npm run test:v4
 
