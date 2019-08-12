@@ -16,10 +16,10 @@ const modelFactory = factory(model, options);
 ```
 - model: Mongoose schema object
 - options: Generation options, where the options are in the 
-  - options.<fieldName>.value **\<mixed\>**: A static value for each generated fixture
-  - options.<fieldName>.value: **\<function\>** a function for generating dynamic a value per item. This function received the mock object as first argument
-  - options.<fieldName>.skip **\<boolean\>**: When set would skip the field.
-  - options.<fieldName>.type **\<string\>**: The sub-type for this field type. For example <String> schema type supports `email`, `firsname` and `lastname`.
+  - options.\<fieldName\>.value **\<mixed\>**: A static value for each generated fixture
+  - options.\<fieldName\>.value: **\<function\>** a function for generating dynamic a value per item. This function received the mock object as first argument
+  - options.\<fieldName\>.skip **\<boolean\>**: When set would skip the field.
+  - options.\<fieldName\>.type **\<string\>**: The sub-type for this field type. For example <String> schema type supports `email`, `firsname` and `lastname`.
 
 # Usage example
 ```js
