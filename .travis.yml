@@ -17,6 +17,6 @@ jobs:
       node_js: lts/*
       script: npm run test
 
-    # - stage: coverage
-    #   node_js: 9
-    #   script: npm run cover
+    - stage: coverage
+      node_js: 9
+      script: npm run cover
