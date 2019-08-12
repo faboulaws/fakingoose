@@ -13,7 +13,7 @@ npm install fackingoose
 
 # Usage
 ```js
-const factory = require('fackingoose');
+const factory = require('fakingoose');
 const entityFactory = factory(model, options);
 ```
 **Options**
