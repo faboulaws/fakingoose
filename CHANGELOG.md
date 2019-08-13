@@ -1,7 +1,7 @@
 ### 1.0.4
 Issue fixes
-- https://github.com/faboulaws/fakingoose/issues/4
-- https://github.com/faboulaws/fakingoose/issues/3
+- [Issue #4](https://github.com/faboulaws/fakingoose/issues/4)
+- [Issue #3](https://github.com/faboulaws/fakingoose/issues/3)
 
 ### 1.0.1 - 1.0.3
 Documentation update
