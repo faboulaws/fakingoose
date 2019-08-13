@@ -240,25 +240,30 @@ describe('mocker test', () => {
     });
 
     describe('value overrides via options', () => {
-        const stringShema = new Schema({ str: String });
+        const stringShema = new Schema({ firstName: String, username: String, lastName: String });
         const StringThing = mongoose.model('StrThing', stringShema);
 
         it('should use static value', () => {
-            const thingMocker = mocker(StringThing, { str: { value: 'blabla' } });
+            const thingMocker = mocker(StringThing, { firstName: { value: 'blabla' } });
             const mock = thingMocker.generate();
-            expect(mock.str).to.eql('blabla');
+            expect(mock.firstName).to.eql('blabla');
         });
 
         it('should use function value', () => {
-            const thingMocker = mocker(StringThing, { str: { value: () => 'blabla' } });
-            const mock = thingMocker.generate();
-            expect(mock.str).to.eql('blabla');
+            const thingMocker = mocker(StringThing, {
+                firstName: { value: () => 'John' },
+                username: {
+                    value: (object) => `${object.firstName}.${object.lastName}`
+                }
+            });
+            const mock = thingMocker.generate({ lastName: 'Doe' });
+            expect(mock.firstName).to.eql('John');
+            expect(mock.username).to.eql('John.Doe');
         });
 
         it('skip value', () => {
             const thingMocker = mocker(StringThing, { str: { skip: true } });
             const mock = thingMocker.generate();
-            console.log(mock);
             expect(mock).not.to.have.property('str');
         });
     });
