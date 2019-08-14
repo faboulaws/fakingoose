@@ -1,3 +1,7 @@
+
+### 1.0.6 (2019-08-14)
+Documentation update
+
 ### 1.0.5 (2019-08-14)
 - Remove `mongoose` dependency
 

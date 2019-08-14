@@ -27,7 +27,7 @@ const entityFactory = factory(model, options);
 # Usage example
 ```js
 const mongoose = require('mongoose');
-const factory = require('fackingoose');
+const factory = require('fakingoose');
 const { Schema } = mongoose;
 
 const authorSchema = new Schema({
