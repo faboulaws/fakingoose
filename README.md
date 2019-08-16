@@ -16,13 +16,13 @@ npm install fakingoose
 const factory = require('fakingoose');
 const entityFactory = factory(model, options);
 ```
-**Options**
-- model: Mongoose schema object.
-- options: Generation options
-  - options.\<fieldName\>.value **\<mixed\>**: A static value for each generated fixture.
-  - options.\<fieldName\>.value: **\<function\>** a function for generating dynamic a value per item. This function received the mock object as first argument.
-  - options.\<fieldName\>.skip **\<boolean\>**: When set to `true` would skip the field.
-  - options.\<fieldName\>.type **\<string\>**: The sub-type for this field type. For example \<String\> schema type supports `email`, `firsname` and `lastname`.
+#### factory(model, options)
+- model **\<[Schema](https://mongoosejs.com/docs/api/schema.html)\>** or **\<[Model](https://mongoosejs.com/docs/api/model.html)\>**: Mongoose [model](https://mongoosejs.com/docs/api/model.html) or [schema](https://mongoosejs.com/docs/api/schema.html).
+- options **\<?Object\>**: Generation options are optional. The factory would generate data for all fields based on the schema alone. For cases where there is a need for custom values, options can be used to define custom values or data generation setting per field.
+  - options.\<propertyName\>.value **\<mixed\>**: A static value for each generated fixture.
+  - options.\<propertyName\>.value: **\<function\>** a function for generating a dynamic value per item. This function receives the mock object as first argument.
+  - options.\<propertyName\>.skip **\<boolean\>**: When set to `true` would skip the field.
+  - options.\<propertyName\>.type **\<string\>**: The sub-type for this field type. For example \<String\> schema type supports `email`, `firsname` and `lastname`.
 
 # Usage example
 ```js
