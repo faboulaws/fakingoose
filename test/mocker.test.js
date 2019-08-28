@@ -228,17 +228,6 @@ describe('mocker test', () => {
         });
     });
 
-    it('defaul values', () => {
-        const stringShema = new Schema({ str: { type: String, default: 'hello' } });
-        const StringThing = mongoose.model('NiceThing', stringShema);
-
-        const thingMocker = mocker(StringThing);
-
-        const mock = thingMocker.generate();
-        const thing = new StringThing(mock);
-        expect(thing.str).to.eql('hello');
-    });
-
     describe('value overrides via options', () => {
         const stringShema = new Schema({ firstName: String, username: String, lastName: String });
         const StringThing = mongoose.model('StrThing', stringShema);
