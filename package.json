@@ -47,8 +47,7 @@
     "lodash.get": "^4.4.2",
     "lodash.isplainobject": "^4.0.6",
     "lodash.merge": "^4.6.2",
-    "lodash.set": "^4.3.2",
-    "mongoose": "^5.6.11"
+    "lodash.set": "^4.3.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.1.0",
