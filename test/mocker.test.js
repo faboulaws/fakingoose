@@ -232,10 +232,17 @@ describe('mocker test', () => {
         const stringShema = new Schema({ firstName: String, username: String, lastName: String });
         const StringThing = mongoose.model('StrThing', stringShema);
 
-        it('should use static value', () => {
+        it('should use static value - at root', () => {
             const thingMocker = mocker(StringThing, { firstName: { value: 'blabla' } });
             const mock = thingMocker.generate();
             expect(mock.firstName).to.eql('blabla');
+        });
+
+        it('should use static value - at leaf', () => {
+            const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+            const thingMocker = mocker(theShema, { 'root.levelOne.firstName': { value: 'blabla' } });
+            const mock = thingMocker.generate();
+            expect(mock.root.levelOne.firstName).to.eql('blabla');
         });
 
         it('should use function value', () => {
@@ -250,10 +257,21 @@ describe('mocker test', () => {
             expect(mock.username).to.eql('John.Doe');
         });
 
-        it('skip value', () => {
-            const thingMocker = mocker(StringThing, { str: { skip: true } });
+        it('skip value - root', () => {
+            const thingMocker = mocker(StringThing, { username: { skip: true } });
             const mock = thingMocker.generate();
-            expect(mock).not.to.have.property('str');
+            expect(mock).not.to.have.property('username');
+        });
+
+        it('skip value - nested', () => {
+            const theSchema = new Schema({ user: { firstName: String, lastName: String, username: String } });
+            const options = { "user.username": { skip: true } }
+            const thingMocker = mocker(theSchema, options);
+            const mock = thingMocker.generate();
+            expect(mock).to.have.property('user');
+            expect(mock.user).to.have.property('firstName');
+            expect(mock.user).to.have.property('lastName');
+            expect(mock.user).not.to.have.property('username');
         });
     });
 
