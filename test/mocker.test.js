@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { expect } = require('chai');
 const get = require('lodash.get');
+const { unflatten } = require('flat');
 const mocker = require('../');
 
 const { Schema } = mongoose;
@@ -228,7 +229,7 @@ describe('mocker test', () => {
         });
     });
 
-    describe('value overrides via options', () => {
+    describe('options > value', () => {
         const stringShema = new Schema({ firstName: String, username: String, lastName: String });
         const StringThing = mongoose.model('StrThing', stringShema);
 
@@ -256,6 +257,15 @@ describe('mocker test', () => {
             expect(mock.firstName).to.eql('John');
             expect(mock.username).to.eql('John.Doe');
         });
+    });
+
+    describe('options > skip', () => {
+        it('value at root', () => {
+            const stringShema = new Schema({ firstName: String, username: String, lastName: String });
+            const thingMocker = mocker(stringShema, { username: { skip: true } });
+            const mock = thingMocker.generate();
+            expect(mock).not.to.have.property('username');
+        });
 
         it('should use function value - nested', () => {
             const theShema = new Schema({ user: { info: { firstName: String, username: String, lastName: String } } });
@@ -271,7 +281,8 @@ describe('mocker test', () => {
         });
 
         it('skip value - root', () => {
-            const thingMocker = mocker(StringThing, { username: { skip: true } });
+            const theSchema = new Schema({ firstName: String, lastName: String, username: String });
+            const thingMocker = mocker(theSchema, { username: { skip: true } });
             const mock = thingMocker.generate();
             expect(mock).not.to.have.property('username');
         });
@@ -285,6 +296,80 @@ describe('mocker test', () => {
             expect(mock.user).to.have.property('firstName');
             expect(mock.user).to.have.property('lastName');
             expect(mock.user).not.to.have.property('username');
+        });
+
+        it('values from root level', () => {
+            const sschema = new Schema({ root: { name: String, nickname: String }, other: { name: String } });
+            const thingMocker = mocker(sschema, { root: { skip: true } });
+            const mock = thingMocker.generate();
+            expect(mock).not.to.have.property('root');
+            expect(mock).to.have.property('other');
+        });
+
+        describe('value leaf level', () => {
+            const directOptions = { "root.name": { skip: true } };
+            it('nested path options', () => {
+                const sschema = new Schema({ root: { name: String, nickname: String }, other: { name: String } });
+                const options = unflatten(directOptions);
+                const thingMocker = mocker(sschema, options);
+                const mock = thingMocker.generate();
+                expect(mock).to.have.property('root');
+                expect(mock.root).to.have.property('nickname');
+                expect(mock.root).not.to.have.property('name');
+            });
+
+            it('direct path options', () => {
+                const sschema = new Schema({ root: { name: String, nickname: String }, other: { name: String } });
+                const options = directOptions;
+                const thingMocker = mocker(sschema, options);
+                const mock = thingMocker.generate();
+                expect(mock).to.have.property('root');
+                expect(mock.root).to.have.property('nickname');
+                expect(mock.root).not.to.have.property('name');
+            });
+        });
+
+        describe('value sub level nested', () => {
+            const sschema = new Schema({
+                root: {
+                    levelOne: {
+                        name: String,
+                        nickname: String
+                    },
+                    level1: {
+                        other: {
+                            name: String
+                        }
+                    }
+                }
+            });
+
+            const directOptions = {
+                "root.level1": { skip: true },
+                "root.levelOne.name": { skip: true },
+            }
+
+            it('nested options', () => {
+                const options = unflatten(directOptions);
+                const thingMocker = mocker(sschema, options);
+                const mock = thingMocker.generate();
+                expect(mock, 'Must have root').to.have.property('root');
+                expect(mock.root, 'Root must have levelOne').to.have.property('levelOne');
+                expect(mock.root, 'Root must not have level1').not.to.have.property('level1');
+                expect(mock.root.levelOne).not.to.have.property('name');
+                expect(mock.root.levelOne).to.have.property('nickname');
+            });
+
+            it('direct options', () => {
+                const options = directOptions;
+                const thingMocker = mocker(sschema, options);
+                const mock = thingMocker.generate();
+                expect(mock, 'Must have root').to.have.property('root');
+                expect(mock.root, 'Root must have levelOne').to.have.property('levelOne');
+                expect(mock.root, 'Root must not have level1').not.to.have.property('level1');
+                expect(mock.root.levelOne).not.to.have.property('name');
+                expect(mock.root.levelOne).to.have.property('nickname');
+            });
         });
     });
 

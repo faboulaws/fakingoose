@@ -131,7 +131,7 @@ const mock = blogFactory.generate({
 }
  ```
 
- # Define options for nested properties
+# Define options for nested properties
 
  To define options for nested a property use the nested property path (property names sperated by a dot).
  Example: 
