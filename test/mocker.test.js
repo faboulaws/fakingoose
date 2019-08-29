@@ -232,10 +232,17 @@ describe('mocker test', () => {
         const stringShema = new Schema({ firstName: String, username: String, lastName: String });
         const StringThing = mongoose.model('StrThing', stringShema);
 
-        it('should use static value', () => {
+        it('should use static value - at root', () => {
             const thingMocker = mocker(StringThing, { firstName: { value: 'blabla' } });
             const mock = thingMocker.generate();
             expect(mock.firstName).to.eql('blabla');
+        });
+
+        it('should use static value - at leaf', () => {
+            const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+            const thingMocker = mocker(theShema, { 'root.levelOne.firstName': { value: 'blabla' } });
+            const mock = thingMocker.generate();
+            expect(mock.root.levelOne.firstName).to.eql('blabla');
         });
 
         it('should use function value', () => {
