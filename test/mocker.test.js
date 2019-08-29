@@ -245,8 +245,8 @@ describe('mocker test', () => {
             expect(mock.root.levelOne.firstName).to.eql('blabla');
         });
 
-        it('should use function value', () => {
-            const thingMocker = mocker(StringThing, {
+        it('should use function value - root', () => {
+            const thingMocker = mocker(stringShema, {
                 firstName: { value: () => 'John' },
                 username: {
                     value: (object) => `${object.firstName}.${object.lastName}`
@@ -255,6 +255,19 @@ describe('mocker test', () => {
             const mock = thingMocker.generate({ lastName: 'Doe' });
             expect(mock.firstName).to.eql('John');
             expect(mock.username).to.eql('John.Doe');
+        });
+
+        it('should use function value - nested', () => {
+            const theShema = new Schema({ user: { info: { firstName: String, username: String, lastName: String } } });
+            const thingMocker = mocker(theShema, {
+                'user.info.firstName': { value: () => 'John' },
+                'user.info.username': {
+                    value: (object) => `${object.user.info.firstName}.${object.user.info.lastName}`
+                }
+            });
+            const mock = thingMocker.generate({ user: { info: { lastName: 'Doe' } } });
+            expect(mock.user.info.firstName).to.eql('John');
+            expect(mock.user.info.username).to.eql('John.Doe');
         });
 
         it('skip value - root', () => {
