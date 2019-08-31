@@ -169,7 +169,7 @@ const accountSchema = new mongoose.Schema({
 const accountFactory = factory(accountSchema, options);
 ```
 
-To generate mocks without an addres define options as below
+To generate mocks without an address define options as below
 
 ``` js
 const options = {
