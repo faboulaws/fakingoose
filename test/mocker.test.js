@@ -278,6 +278,19 @@ describe('mocker test', () => {
                 expect(mock.user.info.firstName).to.eql('John');
                 expect(mock.user.info.username).to.eql('John.Doe');
             });
+
+            it.only('should use value() function for property - nested property', () => {
+                const theShema = new Schema({ user: { info: { firstName: String, username: String, lastName: String } } });
+                const thingMocker = mocker(theShema, unflatten({
+                    'user.info.firstName': { value: () => 'John' },
+                    'user.info.username': {
+                        value: (object) => `${object.user.info.firstName}.${object.user.info.lastName}`
+                    }
+                }));
+                const mock = thingMocker.generate({ user: { info: { lastName: 'Doe' } } });
+                expect(mock.user.info.firstName).to.eql('John');
+                expect(mock.user.info.username).to.eql('John.Doe');
+            });
         });
     });
 
