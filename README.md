@@ -135,12 +135,68 @@ const mock = blogFactory.generate({
 
  To define options for nested a property use the nested property path (property names sperated by a dot).
  Example: 
-```js
+
+``` js
 const options = {
-    "meta.votes": { value: 0 }, // set value for 'votes' property under meta
-    "meta.favs": { skip: true } // skip value for 'favs' property under meta
+    "meta.votes": {
+        value: 0
+    }, // set value for 'votes' property under meta
+    "meta.favs": {
+        skip: true
+    } // skip value for 'favs' property under meta
 }
 ``` 
+
+# Skipping multiple nested properties
+
+Multiple nested properties can be skipped from parent property.
+Example:
+
+```js
+const accountSchema = new mongoose.Schema({
+    user: {
+        generalInfo: {
+            firstName: String,
+            lastName: String,
+            age: Number
+        },
+        address: {
+            postCode: String,
+            street: String
+        }
+    }
+});
+const accountFactory = factory(accountSchema, options);
+```
+
+To generate mocks without an addres define options as below
+
+``` js
+const options = {
+    'user.address': {
+        skip: true
+    }
+}
+```
+
+ or 
+
+ 
+``` js
+const options = {
+    user: {
+        address: {
+            skip: true
+        }
+    }
+}
+```
+
+then
+
+```js
+const mockObject = accountFactory.generate(options);
+```
 
 # Supported Types
 
