@@ -237,9 +237,16 @@ describe('mocker test', () => {
                 expect(mock.firstName).to.eql('blabla');
             });
 
-            it('should use static value - at leaf', () => {
+            it('should use static value - at leaf - key as path', () => {
                 const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
                 const thingMocker = mocker(theShema, { 'root.levelOne.firstName': { value: 'blabla' } });
+                const mock = thingMocker.generate();
+                expect(mock.root.levelOne.firstName).to.eql('blabla');
+            });
+
+            it('should use static value - at leaf - nested key', () => {
+                const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+                const thingMocker = mocker(theShema, { root: { levelOne: { firstName: { value: 'blabla' } } } });
                 const mock = thingMocker.generate();
                 expect(mock.root.levelOne.firstName).to.eql('blabla');
             });
