@@ -175,9 +175,9 @@ describe('mocker test', () => {
         }
     });
 
-    describe('static values', () => {
+    describe('generate(staticFields)', () => {
         const embed = new Schema({ name: String });
-        const stringShema = new Schema({
+        const thingShema = new Schema({
             str: { type: String },
             nested: { name: String },
             doubleNested: {
@@ -207,10 +207,8 @@ describe('mocker test', () => {
             ofEmbedded: [{ name: 'ofEmbedded' }, { name: 'ofEmbedded' }],
         };
 
-        const StringThing = mongoose.model('SomeThing', stringShema);
-
         it('should use static value', () => {
-            const thingMocker = mocker(StringThing);
+            const thingMocker = mocker(thingShema);
             const mock = thingMocker.generate(staticFields);
             // expect(mock).to.deep.include(staticFields);
             const paths = [
@@ -227,39 +225,45 @@ describe('mocker test', () => {
                 expect(get(mock, path)).to.eql(get(staticFields, path));
             });
         });
+
     });
 
-    describe('options > value', () => {
-        const stringShema = new Schema({ firstName: String, username: String, lastName: String });
-        const StringThing = mongoose.model('StrThing', stringShema);
-
-        it('should use static value - at root', () => {
-            const thingMocker = mocker(StringThing, { firstName: { value: 'blabla' } });
-            const mock = thingMocker.generate();
-            expect(mock.firstName).to.eql('blabla');
-        });
-
-        it('should use static value - at leaf', () => {
-            const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
-            const thingMocker = mocker(theShema, { 'root.levelOne.firstName': { value: 'blabla' } });
-            const mock = thingMocker.generate();
-            expect(mock.root.levelOne.firstName).to.eql('blabla');
-        });
-
-        it('should use function value - root', () => {
-            const thingMocker = mocker(stringShema, {
-                firstName: { value: () => 'John' },
-                username: {
-                    value: (object) => `${object.firstName}.${object.lastName}`
-                }
+    describe('options.<propertyName>.value', () => {
+        describe('value', () => {
+            it('should use static value - at root', () => {
+                const userSchema = new Schema({ firstName: String, username: String, lastName: String });
+                const thingMocker = mocker(userSchema, { firstName: { value: 'blabla' } });
+                const mock = thingMocker.generate();
+                expect(mock.firstName).to.eql('blabla');
             });
-            const mock = thingMocker.generate({ lastName: 'Doe' });
-            expect(mock.firstName).to.eql('John');
-            expect(mock.username).to.eql('John.Doe');
+
+            it('should use static value - at leaf', () => {
+                const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+                const thingMocker = mocker(theShema, { 'root.levelOne.firstName': { value: 'blabla' } });
+                const mock = thingMocker.generate();
+                expect(mock.root.levelOne.firstName).to.eql('blabla');
+            });
+        });
+
+        describe('value()', () => {
+            it('at root', () => {
+                const userSchema = new Schema({ firstName: String, username: String, lastName: String });
+                const thingMocker = mocker(userSchema, {
+                    firstName: { value: () => 'John' },
+                    username: {
+                        value: (object) => `${object.firstName}.${object.lastName}`
+                    }
+                });
+                const mock = thingMocker.generate({ lastName: 'Doe' });
+                expect(mock.firstName).to.eql('John');
+                expect(mock.username).to.eql('John.Doe');
+            });
+
+            it.skip('TODO: at leaf');
         });
     });
 
-    describe('options > skip', () => {
+    describe('options.<propertyName>.skip', () => {
         it('value at root', () => {
             const stringShema = new Schema({ firstName: String, username: String, lastName: String });
             const thingMocker = mocker(stringShema, { username: { skip: true } });
