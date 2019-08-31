@@ -279,7 +279,7 @@ describe('mocker test', () => {
                 expect(mock.user.info.username).to.eql('John.Doe');
             });
 
-            it.only('should use value() function for property - nested property', () => {
+            it('should use value() function for property - nested property - nested option key', () => {
                 const theShema = new Schema({ user: { info: { firstName: String, username: String, lastName: String } } });
                 const thingMocker = mocker(theShema, unflatten({
                     'user.info.firstName': { value: () => 'John' },
