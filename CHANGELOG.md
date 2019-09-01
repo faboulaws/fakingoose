@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/faboulaws/fakingoose/compare/v1.2.0...v1.2.1) (2019-09-01)
+
+
+### Bug Fixes
+
+* array support for *options.<propertyName>.value* ([2a328c2](https://github.com/faboulaws/fakingoose/commit/2a328c2))
+
 ## [1.2.0](https://github.com/faboulaws/fakingoose/compare/v1.1.0...v1.2.0) (2019-09-01)
 
 
