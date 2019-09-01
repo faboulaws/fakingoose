@@ -237,11 +237,41 @@ describe('mocker test', () => {
                 expect(mock.firstName).to.eql('blabla');
             });
 
-            it('should use static value - at leaf', () => {
+            it('should use static value - at leaf - key as path', () => {
                 const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
                 const thingMocker = mocker(theShema, { 'root.levelOne.firstName': { value: 'blabla' } });
                 const mock = thingMocker.generate();
                 expect(mock.root.levelOne.firstName).to.eql('blabla');
+            });
+
+            it('should use static value - at leaf - nested key', () => {
+                const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+                const thingMocker = mocker(theShema, { root: { levelOne: { firstName: { value: 'blabla' } } } });
+                const mock = thingMocker.generate();
+                expect(mock.root.levelOne.firstName).to.eql('blabla');
+            });
+
+            describe('root level property', () => {
+                it('should allow using value from parent property - root key', () => {
+                    const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+                    const thingMocker = mocker(theShema, { root: { value: { levelOne: { firstName: 'blabla' } } } });
+                    const mock = thingMocker.generate();
+                    expect(mock.root.levelOne.firstName).to.eql('blabla');
+                });
+
+                it('should allow using value from parent property - sub level(levelOne) - nested option key', () => {
+                    const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+                    const thingMocker = mocker(theShema, { root: { levelOne: { value: { firstName: 'blabla' } } } });
+                    const mock = thingMocker.generate();
+                    expect(mock.root.levelOne.firstName).to.eql('blabla');
+                });
+
+                it('should allow using value from parent property - sub level(levelOne) - path option key(root.levelOne)', () => {
+                    const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+                    const thingMocker = mocker(theShema, { "root.levelOne": { value: { firstName: 'blabla' } } });
+                    const mock = thingMocker.generate();
+                    expect(mock.root.levelOne.firstName).to.eql('blabla');
+                });
             });
         });
 
@@ -270,6 +300,42 @@ describe('mocker test', () => {
                 const mock = thingMocker.generate({ user: { info: { lastName: 'Doe' } } });
                 expect(mock.user.info.firstName).to.eql('John');
                 expect(mock.user.info.username).to.eql('John.Doe');
+            });
+
+            it('should use value() function for property - nested property - nested option key', () => {
+                const theShema = new Schema({ user: { info: { firstName: String, username: String, lastName: String } } });
+                const thingMocker = mocker(theShema, unflatten({
+                    'user.info.firstName': { value: () => 'John' },
+                    'user.info.username': {
+                        value: (object) => `${object.user.info.firstName}.${object.user.info.lastName}`
+                    }
+                }));
+                const mock = thingMocker.generate({ user: { info: { lastName: 'Doe' } } });
+                expect(mock.user.info.firstName).to.eql('John');
+                expect(mock.user.info.username).to.eql('John.Doe');
+            });
+
+            describe('root level property', () => {
+                it('should allow using value from parent property - root key', () => {
+                    const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+                    const thingMocker = mocker(theShema, { root: { value: () => ({ levelOne: { firstName: 'blabla' } }) } });
+                    const mock = thingMocker.generate();
+                    expect(mock.root.levelOne.firstName).to.eql('blabla');
+                });
+
+                it('should allow using value from parent property - sub level(levelOne) - nested option key', () => {
+                    const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+                    const thingMocker = mocker(theShema, { root: { levelOne: { value: () => ({ firstName: 'blabla' }) } } });
+                    const mock = thingMocker.generate();
+                    expect(mock.root.levelOne.firstName).to.eql('blabla');
+                });
+
+                it('should allow using value from parent property - sub level(levelOne) - path option key(root.levelOne)', () => {
+                    const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+                    const thingMocker = mocker(theShema, { "root.levelOne": { value: () => ({ firstName: 'blabla' }) } });
+                    const mock = thingMocker.generate();
+                    expect(mock.root.levelOne.firstName).to.eql('blabla');
+                });
             });
         });
     });
