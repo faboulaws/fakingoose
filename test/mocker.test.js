@@ -272,6 +272,13 @@ describe('mocker test', () => {
                     const mock = thingMocker.generate();
                     expect(mock.root.levelOne.firstName).to.eql('blabla');
                 });
+
+                it('should allow using value from parent property - root key - Array values', () => {
+                    const theShema = new Schema({ root: { levelOne: [new Schema({ fitstName: String })] } });
+                    const thingMocker = mocker(theShema, { root: { value: { levelOne: [{ firstName: 'blabla' }] } } });
+                    const mock = thingMocker.generate();
+                    expect(mock.root.levelOne).to.eql([{ firstName: 'blabla' }]);
+                });
             });
         });
 
@@ -335,6 +342,13 @@ describe('mocker test', () => {
                     const thingMocker = mocker(theShema, { "root.levelOne": { value: () => ({ firstName: 'blabla' }) } });
                     const mock = thingMocker.generate();
                     expect(mock.root.levelOne.firstName).to.eql('blabla');
+                });
+
+                it('should allow using value from parent property - root key - Array values', () => {
+                    const theShema = new Schema({ root: { levelOne: [new Schema({ fitstName: String })] } });
+                    const thingMocker = mocker(theShema, { root: { value: () => ({ levelOne: [{ firstName: 'blabla' }] }) } });
+                    const mock = thingMocker.generate();
+                    expect(mock.root.levelOne).to.eql([{ firstName: 'blabla' }]);
                 });
             });
         });
