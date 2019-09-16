@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/faboulaws/fakingoose.svg?branch=master)](https://travis-ci.org/faboulaws/fakingoose)
 [![Coverage Status](https://coveralls.io/repos/github/faboulaws/fakingoose/badge.svg?branch=master)](https://coveralls.io/github/faboulaws/fakingoose?branch=master)
 
-An automatic fixture generator for mongoose using schema definition.
+An automatic mock data generator for mongoose using schema definition.
 
 #  Install
 
@@ -23,7 +23,7 @@ const entityFactory = factory(model, options);
 
 * model **\<[Schema](https://mongoosejs.com/docs/api/schema.html)\>** or **\<[Model](https://mongoosejs.com/docs/api/model.html)\>**: Mongoose [model](https://mongoosejs.com/docs/api/model.html) or [schema](https://mongoosejs.com/docs/api/schema.html).
 * options **\<? Object\>**: Generation options are optional. The factory would generate data for all fields based on the schema alone. For cases where there is a need for custom values, options can be used to define custom values or data generation setting per field.
-  + options.\<propertyName\>.value **\<mixed\>**: A static value for each generated fixture.
+  + options.\<propertyName\>.value **\<mixed\>**: A static value for each generated mock object.
   + options.\<propertyName\>.value: **\<function\>** a function for generating a dynamic value per item. This function receives the mock object as first argument.
   + options.\<propertyName\>.skip **\<boolean\>**: When set to `true` would skip the field.
   + options.\<propertyName\>.type **\<string\>**: The sub-type for this field type. For example \<String\> schema type supports `email` , `firsname` and `lastname` .
