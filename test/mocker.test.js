@@ -175,6 +175,34 @@ describe('mocker test', () => {
         }
     });
 
+    describe('ObjectId', () => {
+        const schema = new Schema({
+            id: Schema.Types.ObjectId,
+            arrayOfIds: [{ type: Schema.Types.ObjectId }],
+            nestedObjectId: { nestedId: Schema.Types.ObjectId },
+        });
+
+        it('must generate a string value of objectId', () => {
+            const factory = mocker(schema, {});
+            const mockObject = factory.generate();
+            // root level
+            expect(mockObject).to.have.property('id');
+            expect(mockObject.id).to.be.a('string');
+
+            // array
+            expect(mockObject).to.have.property('arrayOfIds');
+            expect(mockObject.arrayOfIds).to.be.an('array');
+            mockObject.arrayOfIds.forEach((value) => {
+                expect(typeof value).to.eql('string');
+            });
+
+            // nested 
+            expect(mockObject).to.have.property('nestedObjectId');
+            expect(mockObject.nestedObjectId).to.have.property('nestedId');
+            expect(mockObject.nestedObjectId.nestedId).to.be.a('string');
+        });
+    });
+
     describe('generate(staticFields)', () => {
         const embed = new Schema({ name: String });
         const thingShema = new Schema({
