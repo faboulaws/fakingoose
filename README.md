@@ -198,6 +198,26 @@ then
 const mockObject = accountFactory.generate(options);
 ```
 
+# Generating ObjectId values
+When generating ObjectId values, you can choose to Stringify the generated ObjectId by using the `tostring` option. By default this options is `true`, so all generated ObjectIds would be converted to a String. Set `tostring` to false to disable this behaviour.
+
+Example: In the snippet below all ObjectIds generated are not strinigified.
+```js
+const friendSchema = new Schema({
+    id: Schema.Types.ObjectId
+    friendIds: [{type: Schema.Types.ObjectId}],
+    bestFriend: {
+        id: Schema.Types.ObjectId
+    }
+});
+
+const amigoFactory = factory(friendSchema, { 
+    id: { tostring: false }
+    friendIds: { tostring: false }
+    'bestFriend.id': { tostring: false }
+}); 
+```
+
 # Supported Types
 
 * String
