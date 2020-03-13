@@ -17,6 +17,7 @@
   "scripts": {
     "test": "npx mocha test/*",
     "test:any": "npm t && npm r mongoose",
+    "test:all": "npm run test:latest && npm run test:v5 && npm run test:v4",
     "test:v3": "npm r mongoose && npm i mongoose@3.x && npm run test:any",
     "test:v4": "npm r mongoose && npm i mongoose@4.x && npm run test:any",
     "test:v5": "npm r mongoose && npm i mongoose@5.x && npm run test:any",
@@ -29,7 +30,8 @@
     "coverage": "nyc npm test",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "cover": "npm i mongoose && npm run coverage && npm run coveralls",
-    "release": "standard-version"
+    "release": "standard-version",
+    "test:and:release": "npm run test:all && standard-version"
   },
   "keywords": [
     "mongoose",
@@ -80,7 +82,8 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-push": "npm run test:all"
     }
   }
 }
