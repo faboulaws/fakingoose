@@ -201,7 +201,7 @@ const mockObject = accountFactory.generate(options);
 # Generating ObjectId values
 When generating ObjectId values, you can choose to Stringify the generated ObjectId by using the `tostring` option. By default this options is `true`, so all generated ObjectIds would be converted to a String. Set `tostring` to false to disable this behaviour.
 
-Example: In the snippet below all ObjectIds generated are not strinigified.
+Example: In the snippet below all ObjectIds generated are not stringified.
 ```js
 const friendSchema = new Schema({
     id: Schema.Types.ObjectId
@@ -218,11 +218,26 @@ const amigoFactory = factory(friendSchema, {
 }); 
 ```
 
+# Generating decimal ([Decimal128](https://developer.mongodb.com/quickstart/bson-data-types-decimal128)) values
+When generating decimal values, you can choose to Stringify the generated number by using the `tostring` option. By default this options is `true`, so all generated numbers would be converted to a String. Set `tostring` to false to disable this behaviour.
+
+Example: In the snippet below all numbers generated are not stringified.
+```js
+const productSchema = new Schema({
+    price: Schema.Types.Decimal128
+});
+
+const productFactory = factory(productSchema, {
+    price: { tostring: false }
+}); 
+```
+
 # Supported Types
 
 * String
 * Array
 * Number
+* Decimal128
 * ObjectId
 * Boolean
 * Mixed
