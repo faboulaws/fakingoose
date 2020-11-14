@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/faboulaws/fakingoose/compare/v1.3.3...v1.4.0) (2020-11-14)
+
+
+### Features
+
+* added the tostring option to Decimal128 generator ([f618699](https://github.com/faboulaws/fakingoose/commit/f61869997f5109791d3518660a3ea32f80cf0314))
+
+
+### Bug Fixes
+
+* upgrade chance from 1.1.4 to 1.1.5 ([e89e0ad](https://github.com/faboulaws/fakingoose/commit/e89e0ad824712c1bdda787541d1557eac68b031e))
+
 ### [1.3.3](https://github.com/faboulaws/fakingoose/compare/v1.3.2...v1.3.3) (2020-03-13)
 
 ### [1.3.2](https://github.com/faboulaws/fakingoose/compare/v1.3.1...v1.3.2) (2020-03-13)
