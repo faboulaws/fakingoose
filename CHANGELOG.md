@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.1](https://github.com/faboulaws/fakingoose/compare/v1.4.0...v1.4.1) (2020-11-14)
+
+
+### Bug Fixes
+
+* package.json & package-lock.json to reduce vulnerabilities ([3af7ea7](https://github.com/faboulaws/fakingoose/commit/3af7ea773bbe9cd424b8fdae3b8254e6357b760d))
+* upgrade bson-objectid from 1.3.0 to 1.3.1 ([03d46be](https://github.com/faboulaws/fakingoose/commit/03d46be5e496ef057e49754199a5a6bb403fa6b6))
+* upgrade chance from 1.1.5 to 1.1.6 ([4069208](https://github.com/faboulaws/fakingoose/commit/4069208bd52080bea03212be427febd6c3bb20c2))
+
 ## [1.4.0](https://github.com/faboulaws/fakingoose/compare/v1.3.3...v1.4.0) (2020-11-14)
 
 
