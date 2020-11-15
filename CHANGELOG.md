@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/faboulaws/fakingoose/compare/v1.4.1...v1.5.0) (2020-11-15)
+
+
+### Features
+
+* added global option for objectid and decimal128 ([1519011](https://github.com/faboulaws/fakingoose/commit/15190116b3cdc34e85f9aa08d3d957038cd88b57))
+
 ### [1.4.1](https://github.com/faboulaws/fakingoose/compare/v1.4.0...v1.4.1) (2020-11-14)
 
 
