@@ -218,6 +218,22 @@ const amigoFactory = factory(friendSchema, {
 }); 
 ```
 
+## Global settings
+To disable stringification globally use `factory.setGlobalObjectIdOptions`.
+
+Example:
+ ```js
+const friendSchema = new Schema({
+    id: Schema.Types.ObjectId
+    friendIds: [{type: Schema.Types.ObjectId}],
+    bestFriend: {
+        id: Schema.Types.ObjectId
+    }
+});
+
+const amigoFactory = factory(friendSchema).setGlobalObjectIdOptions({ tostring: false }); 
+```
+
 # Generating decimal ([Decimal128](https://developer.mongodb.com/quickstart/bson-data-types-decimal128)) values
 When generating decimal values, you can choose to Stringify the generated number by using the `tostring` option. By default this options is `true`, so all generated numbers would be converted to a String. Set `tostring` to false to disable this behaviour.
 
@@ -230,6 +246,17 @@ const productSchema = new Schema({
 const productFactory = factory(productSchema, {
     price: { tostring: false }
 }); 
+```
+## Global settings
+To disable stringification globally use `factory.setGlobalObjectIdOptions`.
+
+Example:
+ ```js
+const productSchema = new Schema({
+    price: Schema.Types.Decimal128
+});
+
+const productFactory = factory(productSchema).setGlobalObjectIdOptions({ tostring: false }); 
 ```
 
 # Supported Types

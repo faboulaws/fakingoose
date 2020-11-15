@@ -182,24 +182,28 @@ describe('mocker test', () => {
             nestedObjectId: { nestedId: Schema.Types.ObjectId },
         });
 
-        it('must generate a string value of objectId', () => {
-            const factory = mocker(schema, {});
-            const mockObject = factory.generate();
+        const expectTypeOf = (type, mockObject) => {
             // root level
             expect(mockObject).to.have.property('id');
-            expect(mockObject.id).to.be.a('string');
+            expect(mockObject.id).to.be.a(type);
 
             // array
             expect(mockObject).to.have.property('arrayOfIds');
             expect(mockObject.arrayOfIds).to.be.an('array');
             mockObject.arrayOfIds.forEach((value) => {
-                expect(typeof value).to.eql('string');
+                expect(typeof value).to.eql(type);
             });
 
             // nested 
             expect(mockObject).to.have.property('nestedObjectId');
             expect(mockObject.nestedObjectId).to.have.property('nestedId');
-            expect(mockObject.nestedObjectId.nestedId).to.be.a('string');
+            expect(mockObject.nestedObjectId.nestedId).to.be.a(type);
+        };
+
+        it('must generate a string value of objectId', () => {
+            const factory = mocker(schema, {});
+            const mockObject = factory.generate();
+            expectTypeOf('string', mockObject)
         });
 
         it('must generate an objectId', () => {
@@ -210,49 +214,46 @@ describe('mocker test', () => {
                 'nestedObjectId.nestedId': { tostring: false },
             });
             const mockObject = factory.generate();
-            // root level
-            expect(mockObject).to.have.property('id');
-            expect(mockObject.id).to.be.an('object');
+            expectTypeOf('object', mockObject);
+        });
 
-            // array
-            expect(mockObject).to.have.property('arrayOfIds');
-            expect(mockObject.arrayOfIds).to.be.an('array');
-            mockObject.arrayOfIds.forEach((value) => {
-                expect(typeof value).to.eql('object');
-            });
-
-            // nested 
-            expect(mockObject).to.have.property('nestedObjectId');
-            expect(mockObject.nestedObjectId).to.have.property('nestedId');
-            expect(mockObject.nestedObjectId.nestedId).to.be.an('object');
+        it('must generate an objectId - global config', () => {
+            const factory = mocker(schema).setGlobalObjectIdOptions({ tostring: false });
+            const mockObject = factory.generate();
+            expectTypeOf('object', mockObject);
         });
     });
 
-    describe('decimal',() => {
+    describe('decimal', () => {
         const schema = new Schema({
             myDecimal: Schema.Types.Decimal128,
             arrayOfDecimals: [{ type: Schema.Types.Decimal128 }],
             nestedDecimals: { nestedValue: Schema.Types.Decimal128 },
         });
 
-        it('must generate a string value of decimal128', () => {
-            const factory = mocker(schema, {});
-            const mockObject = factory.generate();
+        function expectTypeOf(type, mockObject) {
             // root level
             expect(mockObject).to.have.property('myDecimal');
-            expect(mockObject.myDecimal).to.be.a('string');
+            expect(mockObject.myDecimal).to.be.a(type);
 
             // array
             expect(mockObject).to.have.property('arrayOfDecimals');
             expect(mockObject.arrayOfDecimals).to.be.an('array');
             mockObject.arrayOfDecimals.forEach((value) => {
-                expect(typeof value).to.eql('string');
+                expect(typeof value).to.eql(type);
             });
 
             // nested 
             expect(mockObject).to.have.property('nestedDecimals');
             expect(mockObject.nestedDecimals).to.have.property('nestedValue');
-            expect(mockObject.nestedDecimals.nestedValue).to.be.a('string');
+            expect(mockObject.nestedDecimals.nestedValue).to.be.an(type);
+        }
+
+        it('must generate a string value of decimal128', () => {
+            const factory = mocker(schema, {});
+            const mockObject = factory.generate();
+
+            expectTypeOf('string', mockObject);
         });
 
         it('must generate a number', () => {
@@ -262,21 +263,13 @@ describe('mocker test', () => {
                 'nestedDecimals.nestedValue': { tostring: false },
             });
             const mockObject = factory.generate();
-            // root level
-            expect(mockObject).to.have.property('myDecimal');
-            expect(mockObject.myDecimal).to.be.a('number');
+            expectTypeOf('number', mockObject);
+        });
 
-            // array
-            expect(mockObject).to.have.property('arrayOfDecimals');
-            expect(mockObject.arrayOfDecimals).to.be.an('array');
-            mockObject.arrayOfDecimals.forEach((value) => {
-                expect(typeof value).to.eql('number');
-            });
-
-            // nested 
-            expect(mockObject).to.have.property('nestedDecimals');
-            expect(mockObject.nestedDecimals).to.have.property('nestedValue');
-            expect(mockObject.nestedDecimals.nestedValue).to.be.an('number');
+        it('must generate a number - global', () => {
+            const factory = mocker(schema).setGlobalDecimal128Options({ tostring: false });
+            const mockObject = factory.generate();
+            expectTypeOf('number', mockObject);
         });
     });
 
