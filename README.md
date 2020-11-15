@@ -248,7 +248,7 @@ const productFactory = factory(productSchema, {
 }); 
 ```
 ## Global settings
-To disable stringification globally use `factory.setGlobalObjectIdOptions`.
+To disable stringification globally use `factory.setGlobalDecimal128Options`.
 
 Example:
  ```js
@@ -256,7 +256,7 @@ const productSchema = new Schema({
     price: Schema.Types.Decimal128
 });
 
-const productFactory = factory(productSchema).setGlobalObjectIdOptions({ tostring: false }); 
+const productFactory = factory(productSchema).setGlobalDecimal128Options({ tostring: false }); 
 ```
 
 # Supported Types
