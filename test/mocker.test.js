@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const get = require('lodash.get');
 const { unflatten } = require('flat');
 
-const mongoose3 = require('mongoose3');
+// const mongoose3 = require('mongoose3');
 const mongoose4 = require('mongoose4');
 const mongoose5 = require('mongoose5');
 const mongooseLatest = require('mongooseLatest');
