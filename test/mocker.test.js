@@ -1,72 +1,85 @@
-const mongoose = require('mongoose');
 const { expect } = require('chai');
 const get = require('lodash.get');
 const { unflatten } = require('flat');
-const mocker = require('../');
 
-const { Schema } = mongoose;
+const mongoose3 = require('mongoose3');
+const mongoose4 = require('mongoose4');
+const mongoose5 = require('mongoose5');
+const mongooseLatest = require('mongooseLatest');
 
-const allOfType = expectedType => array => array.every(item => (typeof item === expectedType));
-const allInstanceOf = expectedType => array => array.every(item => (item instanceof expectedType));
-const allOfWithProps = expectedProps => array =>
-    array.every(item => Object.entries(expectedProps).every(([prop, expectedType]) => (typeof item[prop] === expectedType)));
+const mocker = require('../lib/mocker');
 
-const embedded = new Schema({ name: String, number: Number });
-
-const schemaDef = {
-    name: String,
-    nameDef: { type: String },
-    nameLower: { type: String, lowercase: true },
-    title: { type: String, enum: ['Mr.', 'Mrs.', 'Dr.'] },
-    binary: Buffer,
-    living: Boolean,
-    created: { type: Date },
-    updated: { type: Date, default: Date.now },
-    age: { type: Number, min: 18, max: 65 },
-    mixed: Schema.Types.Mixed,
-    _someId: Schema.Types.ObjectId,
-    decimal: Schema.Types.Decimal128,
-    array: [],
-    ofString: [String],
-    ofStringWithDef: [{ type: String }],
-    ofNumber: [Number],
-    positiveNumber: {
-        type: Number, min: [0, 'Too small'],
-    },
-    ofDates: [Date],
-    ofBuffer: [Buffer],
-    ofBoolean: [Boolean],
-    ofMixed: [Schema.Types.Mixed],
-    ofObjectId: [Schema.Types.ObjectId],
-    // ofArrays: [[]],
-    // ofArrayOfNumbers: [[Number]],
-    nested: {
-        stuff: { type: String, lowercase: true, trim: true },
-        count: Number,
-    },
-
-    embedded,
-    ofEmbedded: [embedded],
-};
-
-
-if (mongoose.Types.Map) {
-    Object.assign(schemaDef, {
-        map: Map,
-        mapOfString: {
-            type: Map,
-            of: String,
-        },
-    });
-}
-const schema = new Schema(schemaDef);
-
-// example use
-
-const Thing = mongoose.model('Thing', schema);
+const allOfType = (expectedType) => (array) => array.every((item) => (typeof item === expectedType));
+const allInstanceOf = (expectedType) => (array) => array.every((item) => (item instanceof expectedType));
+const allOfWithProps = (expectedProps) => (array) => array.every((item) => Object.entries(expectedProps).every(([prop, expectedType]) => (typeof item[prop] === expectedType)));
 
 describe('mocker test', () => {
-    it('must generate mock', () => {
+  const tests = [
+    // { version: '3', mongoose: mongoose3 }, TODO not working (see issue #18: https://github.com/faboulaws/fakingoose/issues/18)
+    { version: '4', mongoose: mongoose4 },
+    { version: '5', mongoose: mongoose5 },
+    { version: 'latest', mongoose: mongooseLatest },
+  ];
+
+  tests.forEach((test) => {
+    const { mongoose } = test;
+    const { Schema } = mongoose;
+    const embedded = new Schema({ name: String, number: Number });
+
+    const schemaDef = {
+      name: String,
+      nameDef: { type: String },
+      nameLower: { type: String, lowercase: true },
+      title: { type: String, enum: ['Mr.', 'Mrs.', 'Dr.'] },
+      binary: Buffer,
+      living: Boolean,
+      created: { type: Date },
+      updated: { type: Date, default: Date.now },
+      age: { type: Number, min: 18, max: 65 },
+      mixed: Schema.Types.Mixed,
+      _someId: Schema.Types.ObjectId,
+      decimal: Schema.Types.Decimal128,
+      array: [],
+      ofString: [String],
+      ofStringWithDef: [{ type: String }],
+      ofNumber: [Number],
+      positiveNumber: {
+        type: Number, min: [0, 'Too small'],
+      },
+      ofDates: [Date],
+      ofBuffer: [Buffer],
+      ofBoolean: [Boolean],
+      ofMixed: [Schema.Types.Mixed],
+      ofObjectId: [Schema.Types.ObjectId],
+      // ofArrays: [[]],
+      // ofArrayOfNumbers: [[Number]],
+      nested: {
+        stuff: { type: String, lowercase: true, trim: true },
+        count: Number,
+      },
+
+      embedded,
+      ofEmbedded: [embedded],
+    };
+
+
+    if (mongoose.Types.Map) {
+      Object.assign(schemaDef, {
+        map: Map,
+        mapOfString: {
+          type: Map,
+          of: String,
+        },
+      });
+    }
+    const schema = new Schema(schemaDef);
+
+    // example use
+
+    const Thing = mongoose.model('Thing', schema);
+
+    describe(`mongoose@${test.version}`, () => {
+      it('must generate mock', () => {
         const thingMocker = mocker(Thing, {});
         const _mock = thingMocker.generate();
         const mock = new Thing(_mock);
@@ -162,397 +175,398 @@ describe('mocker test', () => {
         expect(mock.ofMixed).to.have.lengthOf.above(1);
 
         if (mongoose.Types.Map) {
-            // map
-            expect(mock).to.have.property('map');
-            expect(mock.map).to.be.an('Map');
+          // map
+          expect(mock).to.have.property('map');
+          expect(mock.map).to.be.an('Map');
 
-            // map of string
-            expect(mock).to.have.property('mapOfString');
-            expect(mock.mapOfString).to.be.an('Map');
-            mock.mapOfString.values((value) => {
-                expect(value).to.be.a('string');
-            });
+          // map of string
+          expect(mock).to.have.property('mapOfString');
+          expect(mock.mapOfString).to.be.an('Map');
+          mock.mapOfString.values((value) => {
+            expect(value).to.be.a('string');
+          });
         }
-    });
+      });
 
-    describe('ObjectId', () => {
+      describe('ObjectId', () => {
         const schema = new Schema({
-            id: Schema.Types.ObjectId,
-            arrayOfIds: [{ type: Schema.Types.ObjectId }],
-            nestedObjectId: { nestedId: Schema.Types.ObjectId },
+          id: Schema.Types.ObjectId,
+          arrayOfIds: [{ type: Schema.Types.ObjectId }],
+          nestedObjectId: { nestedId: Schema.Types.ObjectId },
         });
 
         const expectTypeOf = (type, mockObject) => {
-            // root level
-            expect(mockObject).to.have.property('id');
-            expect(mockObject.id).to.be.a(type);
+          // root level
+          expect(mockObject).to.have.property('id');
+          expect(mockObject.id).to.be.a(type);
 
-            // array
-            expect(mockObject).to.have.property('arrayOfIds');
-            expect(mockObject.arrayOfIds).to.be.an('array');
-            mockObject.arrayOfIds.forEach((value) => {
-                expect(typeof value).to.eql(type);
-            });
+          // array
+          expect(mockObject).to.have.property('arrayOfIds');
+          expect(mockObject.arrayOfIds).to.be.an('array');
+          mockObject.arrayOfIds.forEach((value) => {
+            expect(typeof value).to.eql(type);
+          });
 
-            // nested 
-            expect(mockObject).to.have.property('nestedObjectId');
-            expect(mockObject.nestedObjectId).to.have.property('nestedId');
-            expect(mockObject.nestedObjectId.nestedId).to.be.a(type);
+          // nested
+          expect(mockObject).to.have.property('nestedObjectId');
+          expect(mockObject.nestedObjectId).to.have.property('nestedId');
+          expect(mockObject.nestedObjectId.nestedId).to.be.a(type);
         };
 
         it('must generate a string value of objectId', () => {
-            const factory = mocker(schema, {});
-            const mockObject = factory.generate();
-            expectTypeOf('string', mockObject)
+          const factory = mocker(schema, {});
+          const mockObject = factory.generate();
+          expectTypeOf('string', mockObject);
         });
 
         it('must generate an objectId', () => {
-            const factory = mocker(schema, {
-                _id: { tostring: false },
-                id: { tostring: false },
-                arrayOfIds: { tostring: false },
-                'nestedObjectId.nestedId': { tostring: false },
-            });
-            const mockObject = factory.generate();
-            expectTypeOf('object', mockObject);
+          const factory = mocker(schema, {
+            _id: { tostring: false },
+            id: { tostring: false },
+            arrayOfIds: { tostring: false },
+            'nestedObjectId.nestedId': { tostring: false },
+          });
+          const mockObject = factory.generate();
+          expectTypeOf('object', mockObject);
         });
 
         it('must generate an objectId - global config', () => {
-            const factory = mocker(schema).setGlobalObjectIdOptions({ tostring: false });
-            const mockObject = factory.generate();
-            expectTypeOf('object', mockObject);
+          const factory = mocker(schema).setGlobalObjectIdOptions({ tostring: false });
+          const mockObject = factory.generate();
+          expectTypeOf('object', mockObject);
         });
-    });
+      });
 
-    describe('decimal', () => {
+      describe('decimal', () => {
         const schema = new Schema({
-            myDecimal: Schema.Types.Decimal128,
-            arrayOfDecimals: [{ type: Schema.Types.Decimal128 }],
-            nestedDecimals: { nestedValue: Schema.Types.Decimal128 },
+          myDecimal: Schema.Types.Decimal128,
+          arrayOfDecimals: [{ type: Schema.Types.Decimal128 }],
+          nestedDecimals: { nestedValue: Schema.Types.Decimal128 },
         });
 
         function expectTypeOf(type, mockObject) {
-            // root level
-            expect(mockObject).to.have.property('myDecimal');
-            expect(mockObject.myDecimal).to.be.a(type);
+          // root level
+          expect(mockObject).to.have.property('myDecimal');
+          expect(mockObject.myDecimal).to.be.a(type);
 
-            // array
-            expect(mockObject).to.have.property('arrayOfDecimals');
-            expect(mockObject.arrayOfDecimals).to.be.an('array');
-            mockObject.arrayOfDecimals.forEach((value) => {
-                expect(typeof value).to.eql(type);
-            });
+          // array
+          expect(mockObject).to.have.property('arrayOfDecimals');
+          expect(mockObject.arrayOfDecimals).to.be.an('array');
+          mockObject.arrayOfDecimals.forEach((value) => {
+            expect(typeof value).to.eql(type);
+          });
 
-            // nested 
-            expect(mockObject).to.have.property('nestedDecimals');
-            expect(mockObject.nestedDecimals).to.have.property('nestedValue');
-            expect(mockObject.nestedDecimals.nestedValue).to.be.an(type);
+          // nested
+          expect(mockObject).to.have.property('nestedDecimals');
+          expect(mockObject.nestedDecimals).to.have.property('nestedValue');
+          expect(mockObject.nestedDecimals.nestedValue).to.be.an(type);
         }
 
         it('must generate a string value of decimal128', () => {
-            const factory = mocker(schema, {});
-            const mockObject = factory.generate();
+          const factory = mocker(schema, {});
+          const mockObject = factory.generate();
 
-            expectTypeOf('string', mockObject);
+          expectTypeOf('string', mockObject);
         });
 
         it('must generate a number', () => {
-            const factory = mocker(schema, {
-                myDecimal: { tostring: false },
-                arrayOfDecimals: { tostring: false },
-                'nestedDecimals.nestedValue': { tostring: false },
-            });
-            const mockObject = factory.generate();
-            expectTypeOf('number', mockObject);
+          const factory = mocker(schema, {
+            myDecimal: { tostring: false },
+            arrayOfDecimals: { tostring: false },
+            'nestedDecimals.nestedValue': { tostring: false },
+          });
+          const mockObject = factory.generate();
+          expectTypeOf('number', mockObject);
         });
 
         it('must generate a number - global', () => {
-            const factory = mocker(schema).setGlobalDecimal128Options({ tostring: false });
-            const mockObject = factory.generate();
-            expectTypeOf('number', mockObject);
+          const factory = mocker(schema).setGlobalDecimal128Options({ tostring: false });
+          const mockObject = factory.generate();
+          expectTypeOf('number', mockObject);
         });
-    });
+      });
 
-    describe('generate(staticFields)', () => {
+      describe('generate(staticFields)', () => {
         const embed = new Schema({ name: String });
         const thingShema = new Schema({
-            str: { type: String },
+          str: { type: String },
+          nested: { name: String },
+          doubleNested: {
             nested: { name: String },
-            doubleNested: {
-                nested: { name: String },
-            },
-            embedded: embed,
-            doubleEmbed: {
-                nested: embed,
-            },
-            ofString: [String],
-            ofObject: [{ name: String }],
-            ofEmbedded: [embed],
+          },
+          embedded: embed,
+          doubleEmbed: {
+            nested: embed,
+          },
+          ofString: [String],
+          ofObject: [{ name: String }],
+          ofEmbedded: [embed],
         });
 
         const staticFields = {
-            str: 'hello',
-            nested: { name: 'nested' },
-            doubleNested: {
-                nested: { name: 'doubleNested' },
-            },
-            embedded: { name: 'embedded' },
-            doubleEmbed: {
-                nested: { name: 'doubleEmbed' },
-            },
-            ofString: ['ofString', 'ofSTring'],
-            ofObject: [{ name: 'ofObject' }, { name: 'ofObject' }],
-            ofEmbedded: [{ name: 'ofEmbedded' }, { name: 'ofEmbedded' }],
+          str: 'hello',
+          nested: { name: 'nested' },
+          doubleNested: {
+            nested: { name: 'doubleNested' },
+          },
+          embedded: { name: 'embedded' },
+          doubleEmbed: {
+            nested: { name: 'doubleEmbed' },
+          },
+          ofString: ['ofString', 'ofSTring'],
+          ofObject: [{ name: 'ofObject' }, { name: 'ofObject' }],
+          ofEmbedded: [{ name: 'ofEmbedded' }, { name: 'ofEmbedded' }],
         };
 
         it('should use static value', () => {
-            const thingMocker = mocker(thingShema);
-            const mock = thingMocker.generate(staticFields);
-            // expect(mock).to.deep.include(staticFields);
-            const paths = [
-                'str',
-                'nested.name',
-                'doubleNested.nested.name',
-                'embedded.name',
-                'doubleEmbed.nested.name',
-                'ofString',
-                'ofObject',
-                'ofEmbedded',
-            ];
-            paths.forEach((path) => {
-                expect(get(mock, path)).to.eql(get(staticFields, path));
-            });
+          const thingMocker = mocker(thingShema);
+          const mock = thingMocker.generate(staticFields);
+          // expect(mock).to.deep.include(staticFields);
+          const paths = [
+            'str',
+            'nested.name',
+            'doubleNested.nested.name',
+            'embedded.name',
+            'doubleEmbed.nested.name',
+            'ofString',
+            'ofObject',
+            'ofEmbedded',
+          ];
+          paths.forEach((path) => {
+            expect(get(mock, path)).to.eql(get(staticFields, path));
+          });
         });
+      });
 
-    });
-
-    describe('options.<propertyName>.value', () => {
+      describe('options.<propertyName>.value', () => {
         describe('value', () => {
-            it('should use static value - at root', () => {
-                const userSchema = new Schema({ firstName: String, username: String, lastName: String });
-                const thingMocker = mocker(userSchema, { firstName: { value: 'blabla' } });
-                const mock = thingMocker.generate();
-                expect(mock.firstName).to.eql('blabla');
+          it('should use static value - at root', () => {
+            const userSchema = new Schema({ firstName: String, username: String, lastName: String });
+            const thingMocker = mocker(userSchema, { firstName: { value: 'blabla' } });
+            const mock = thingMocker.generate();
+            expect(mock.firstName).to.eql('blabla');
+          });
+
+          it('should use static value - at leaf - key as path', () => {
+            const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+            const thingMocker = mocker(theShema, { 'root.levelOne.firstName': { value: 'blabla' } });
+            const mock = thingMocker.generate();
+            expect(mock.root.levelOne.firstName).to.eql('blabla');
+          });
+
+          it('should use static value - at leaf - nested key', () => {
+            const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+            const thingMocker = mocker(theShema, { root: { levelOne: { firstName: { value: 'blabla' } } } });
+            const mock = thingMocker.generate();
+            expect(mock.root.levelOne.firstName).to.eql('blabla');
+          });
+
+          describe('root level property', () => {
+            it('should allow using value from parent property - root key', () => {
+              const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+              const thingMocker = mocker(theShema, { root: { value: { levelOne: { firstName: 'blabla' } } } });
+              const mock = thingMocker.generate();
+              expect(mock.root.levelOne.firstName).to.eql('blabla');
             });
 
-            it('should use static value - at leaf - key as path', () => {
-                const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
-                const thingMocker = mocker(theShema, { 'root.levelOne.firstName': { value: 'blabla' } });
-                const mock = thingMocker.generate();
-                expect(mock.root.levelOne.firstName).to.eql('blabla');
+            it('should allow using value from parent property - sub level(levelOne) - nested option key', () => {
+              const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+              const thingMocker = mocker(theShema, { root: { levelOne: { value: { firstName: 'blabla' } } } });
+              const mock = thingMocker.generate();
+              expect(mock.root.levelOne.firstName).to.eql('blabla');
             });
 
-            it('should use static value - at leaf - nested key', () => {
-                const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
-                const thingMocker = mocker(theShema, { root: { levelOne: { firstName: { value: 'blabla' } } } });
-                const mock = thingMocker.generate();
-                expect(mock.root.levelOne.firstName).to.eql('blabla');
+            it('should allow using value from parent property - sub level(levelOne) - path option key(root.levelOne)', () => {
+              const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+              const thingMocker = mocker(theShema, { 'root.levelOne': { value: { firstName: 'blabla' } } });
+              const mock = thingMocker.generate();
+              expect(mock.root.levelOne.firstName).to.eql('blabla');
             });
 
-            describe('root level property', () => {
-                it('should allow using value from parent property - root key', () => {
-                    const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
-                    const thingMocker = mocker(theShema, { root: { value: { levelOne: { firstName: 'blabla' } } } });
-                    const mock = thingMocker.generate();
-                    expect(mock.root.levelOne.firstName).to.eql('blabla');
-                });
-
-                it('should allow using value from parent property - sub level(levelOne) - nested option key', () => {
-                    const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
-                    const thingMocker = mocker(theShema, { root: { levelOne: { value: { firstName: 'blabla' } } } });
-                    const mock = thingMocker.generate();
-                    expect(mock.root.levelOne.firstName).to.eql('blabla');
-                });
-
-                it('should allow using value from parent property - sub level(levelOne) - path option key(root.levelOne)', () => {
-                    const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
-                    const thingMocker = mocker(theShema, { "root.levelOne": { value: { firstName: 'blabla' } } });
-                    const mock = thingMocker.generate();
-                    expect(mock.root.levelOne.firstName).to.eql('blabla');
-                });
-
-                it('should allow using value from parent property - root key - Array values', () => {
-                    const theShema = new Schema({ root: { levelOne: [new Schema({ fitstName: String })] } });
-                    const thingMocker = mocker(theShema, { root: { value: { levelOne: [{ firstName: 'blabla' }] } } });
-                    const mock = thingMocker.generate();
-                    expect(mock.root.levelOne).to.eql([{ firstName: 'blabla' }]);
-                });
+            it('should allow using value from parent property - root key - Array values', () => {
+              const theShema = new Schema({ root: { levelOne: [new Schema({ fitstName: String })] } });
+              const thingMocker = mocker(theShema, { root: { value: { levelOne: [{ firstName: 'blabla' }] } } });
+              const mock = thingMocker.generate();
+              expect(mock.root.levelOne).to.eql([{ firstName: 'blabla' }]);
             });
+          });
         });
 
         describe('value()', () => {
-            it('should use value() function for property', () => {
-                const userSchema = new Schema({ firstName: String, username: String, lastName: String });
-                const thingMocker = mocker(userSchema, {
-                    firstName: { value: () => 'John' },
-                    username: {
-                        value: (object) => `${object.firstName}.${object.lastName}`
-                    }
-                });
-                const mock = thingMocker.generate({ lastName: 'Doe' });
-                expect(mock.firstName).to.eql('John');
-                expect(mock.username).to.eql('John.Doe');
+          it('should use value() function for property', () => {
+            const userSchema = new Schema({ firstName: String, username: String, lastName: String });
+            const thingMocker = mocker(userSchema, {
+              firstName: { value: () => 'John' },
+              username: {
+                value: (object) => `${object.firstName}.${object.lastName}`,
+              },
+            });
+            const mock = thingMocker.generate({ lastName: 'Doe' });
+            expect(mock.firstName).to.eql('John');
+            expect(mock.username).to.eql('John.Doe');
+          });
+
+          it('should use value() function for property - nested property', () => {
+            const theShema = new Schema({ user: { info: { firstName: String, username: String, lastName: String } } });
+            const thingMocker = mocker(theShema, {
+              'user.info.firstName': { value: () => 'John' },
+              'user.info.username': {
+                value: (object) => `${object.user.info.firstName}.${object.user.info.lastName}`,
+              },
+            });
+            const mock = thingMocker.generate({ user: { info: { lastName: 'Doe' } } });
+            expect(mock.user.info.firstName).to.eql('John');
+            expect(mock.user.info.username).to.eql('John.Doe');
+          });
+
+          it('should use value() function for property - nested property - nested option key', () => {
+            const theShema = new Schema({ user: { info: { firstName: String, username: String, lastName: String } } });
+            const thingMocker = mocker(theShema, unflatten({
+              'user.info.firstName': { value: () => 'John' },
+              'user.info.username': {
+                value: (object) => `${object.user.info.firstName}.${object.user.info.lastName}`,
+              },
+            }));
+            const mock = thingMocker.generate({ user: { info: { lastName: 'Doe' } } });
+            expect(mock.user.info.firstName).to.eql('John');
+            expect(mock.user.info.username).to.eql('John.Doe');
+          });
+
+          describe('root level property', () => {
+            it('should allow using value from parent property - root key', () => {
+              const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+              const thingMocker = mocker(theShema, { root: { value: () => ({ levelOne: { firstName: 'blabla' } }) } });
+              const mock = thingMocker.generate();
+              expect(mock.root.levelOne.firstName).to.eql('blabla');
             });
 
-            it('should use value() function for property - nested property', () => {
-                const theShema = new Schema({ user: { info: { firstName: String, username: String, lastName: String } } });
-                const thingMocker = mocker(theShema, {
-                    'user.info.firstName': { value: () => 'John' },
-                    'user.info.username': {
-                        value: (object) => `${object.user.info.firstName}.${object.user.info.lastName}`
-                    }
-                });
-                const mock = thingMocker.generate({ user: { info: { lastName: 'Doe' } } });
-                expect(mock.user.info.firstName).to.eql('John');
-                expect(mock.user.info.username).to.eql('John.Doe');
+            it('should allow using value from parent property - sub level(levelOne) - nested option key', () => {
+              const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+              const thingMocker = mocker(theShema, { root: { levelOne: { value: () => ({ firstName: 'blabla' }) } } });
+              const mock = thingMocker.generate();
+              expect(mock.root.levelOne.firstName).to.eql('blabla');
             });
 
-            it('should use value() function for property - nested property - nested option key', () => {
-                const theShema = new Schema({ user: { info: { firstName: String, username: String, lastName: String } } });
-                const thingMocker = mocker(theShema, unflatten({
-                    'user.info.firstName': { value: () => 'John' },
-                    'user.info.username': {
-                        value: (object) => `${object.user.info.firstName}.${object.user.info.lastName}`
-                    }
-                }));
-                const mock = thingMocker.generate({ user: { info: { lastName: 'Doe' } } });
-                expect(mock.user.info.firstName).to.eql('John');
-                expect(mock.user.info.username).to.eql('John.Doe');
+            it('should allow using value from parent property - sub level(levelOne) - path option key(root.levelOne)', () => {
+              const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
+              const thingMocker = mocker(theShema, { 'root.levelOne': { value: () => ({ firstName: 'blabla' }) } });
+              const mock = thingMocker.generate();
+              expect(mock.root.levelOne.firstName).to.eql('blabla');
             });
 
-            describe('root level property', () => {
-                it('should allow using value from parent property - root key', () => {
-                    const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
-                    const thingMocker = mocker(theShema, { root: { value: () => ({ levelOne: { firstName: 'blabla' } }) } });
-                    const mock = thingMocker.generate();
-                    expect(mock.root.levelOne.firstName).to.eql('blabla');
-                });
-
-                it('should allow using value from parent property - sub level(levelOne) - nested option key', () => {
-                    const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
-                    const thingMocker = mocker(theShema, { root: { levelOne: { value: () => ({ firstName: 'blabla' }) } } });
-                    const mock = thingMocker.generate();
-                    expect(mock.root.levelOne.firstName).to.eql('blabla');
-                });
-
-                it('should allow using value from parent property - sub level(levelOne) - path option key(root.levelOne)', () => {
-                    const theShema = new Schema({ root: { levelOne: { firstName: String, username: String, lastName: String } } });
-                    const thingMocker = mocker(theShema, { "root.levelOne": { value: () => ({ firstName: 'blabla' }) } });
-                    const mock = thingMocker.generate();
-                    expect(mock.root.levelOne.firstName).to.eql('blabla');
-                });
-
-                it('should allow using value from parent property - root key - Array values', () => {
-                    const theShema = new Schema({ root: { levelOne: [new Schema({ fitstName: String })] } });
-                    const thingMocker = mocker(theShema, { root: { value: () => ({ levelOne: [{ firstName: 'blabla' }] }) } });
-                    const mock = thingMocker.generate();
-                    expect(mock.root.levelOne).to.eql([{ firstName: 'blabla' }]);
-                });
+            it('should allow using value from parent property - root key - Array values', () => {
+              const theShema = new Schema({ root: { levelOne: [new Schema({ fitstName: String })] } });
+              const thingMocker = mocker(theShema, { root: { value: () => ({ levelOne: [{ firstName: 'blabla' }] }) } });
+              const mock = thingMocker.generate();
+              expect(mock.root.levelOne).to.eql([{ firstName: 'blabla' }]);
             });
+          });
         });
-    });
+      });
 
-    describe('options.<propertyName>.skip', () => {
+      describe('options.<propertyName>.skip', () => {
         describe('direct skip', () => {
-            it('should skip property at root', () => {
-                const stringShema = new Schema({ firstName: String, username: String, lastName: String });
-                const thingMocker = mocker(stringShema, { username: { skip: true } });
-                const mock = thingMocker.generate();
-                expect(mock).not.to.have.property('username');
-                expect(mock).to.have.property('firstName');
-                expect(mock).to.have.property('lastName');
-            });
+          it('should skip property at root', () => {
+            const stringShema = new Schema({ firstName: String, username: String, lastName: String });
+            const thingMocker = mocker(stringShema, { username: { skip: true } });
+            const mock = thingMocker.generate();
+            expect(mock).not.to.have.property('username');
+            expect(mock).to.have.property('firstName');
+            expect(mock).to.have.property('lastName');
+          });
 
-            it('should skip nested property - key as path', () => {
-                const theSchema = new Schema({ user: { firstName: String, lastName: String, username: String } });
-                const options = { "user.username": { skip: true } }
-                const thingMocker = mocker(theSchema, options);
-                const mock = thingMocker.generate();
-                expect(mock).to.have.property('user');
-                expect(mock.user).to.have.property('firstName');
-                expect(mock.user).to.have.property('lastName');
-                expect(mock.user).not.to.have.property('username');
-            });
+          it('should skip nested property - key as path', () => {
+            const theSchema = new Schema({ user: { firstName: String, lastName: String, username: String } });
+            const options = { 'user.username': { skip: true } };
+            const thingMocker = mocker(theSchema, options);
+            const mock = thingMocker.generate();
+            expect(mock).to.have.property('user');
+            expect(mock.user).to.have.property('firstName');
+            expect(mock.user).to.have.property('lastName');
+            expect(mock.user).not.to.have.property('username');
+          });
 
-            it('should skip nested property - key is nested', () => {
-                const sschema = new Schema({ root: { name: String, nickname: String }, other: { name: String } });
-                const options = { root: { name: { skip: true } } };
-                const thingMocker = mocker(sschema, options);
-                const mock = thingMocker.generate();
-                expect(mock).to.have.property('root');
-                expect(mock.root).to.have.property('nickname');
-                expect(mock.root).not.to.have.property('name');
-            });
+          it('should skip nested property - key is nested', () => {
+            const sschema = new Schema({ root: { name: String, nickname: String }, other: { name: String } });
+            const options = { root: { name: { skip: true } } };
+            const thingMocker = mocker(sschema, options);
+            const mock = thingMocker.generate();
+            expect(mock).to.have.property('root');
+            expect(mock.root).to.have.property('nickname');
+            expect(mock.root).not.to.have.property('name');
+          });
         });
 
         describe('indirect skip (from parent)', () => {
-            it('should skip a subtree - from root', () => {
-                const sschema = new Schema({
-                    root: { name: String, nickname: String },
-                    other: { name: String }
-                });
-                const thingMocker = mocker(sschema, { root: { skip: true } });
-                const mock = thingMocker.generate();
-                expect(mock).not.to.have.property('root');
-                expect(mock).to.have.property('other');
-                expect(mock.other).to.have.property('name');
+          it('should skip a subtree - from root', () => {
+            const sschema = new Schema({
+              root: { name: String, nickname: String },
+              other: { name: String },
+            });
+            const thingMocker = mocker(sschema, { root: { skip: true } });
+            const mock = thingMocker.generate();
+            expect(mock).not.to.have.property('root');
+            expect(mock).to.have.property('other');
+            expect(mock.other).to.have.property('name');
+          });
+
+          describe('nested property under root', () => {
+            const sschema = new Schema({
+              root: {
+                levelOne: {
+                  name: String,
+                  nickname: String,
+                },
+                level1: {
+                  other: {
+                    name: String,
+                  },
+                },
+              },
             });
 
-            describe('nested property under root', () => {
-                const sschema = new Schema({
-                    root: {
-                        levelOne: {
-                            name: String,
-                            nickname: String
-                        },
-                        level1: {
-                            other: {
-                                name: String
-                            }
-                        }
-                    }
-                });
+            const directOptions = {
+              'root.level1': { skip: true },
+              'root.levelOne.name': { skip: true },
+            };
 
-                const directOptions = {
-                    "root.level1": { skip: true },
-                    "root.levelOne.name": { skip: true },
-                }
-
-                it('direct options\'s keys', () => {
-                    const options = directOptions;
-                    const thingMocker = mocker(sschema, options);
-                    const mock = thingMocker.generate();
-                    expect(mock, 'Must have root').to.have.property('root');
-                    expect(mock.root, 'Root must have levelOne').to.have.property('levelOne');
-                    expect(mock.root, 'Root must not have level1').not.to.have.property('level1');
-                    expect(mock.root.levelOne).not.to.have.property('name');
-                    expect(mock.root.levelOne).to.have.property('nickname');
-                });
-
-                it('nested options\'s keys', () => {
-                    const options = unflatten(directOptions);
-                    const thingMocker = mocker(sschema, options);
-                    const mock = thingMocker.generate();
-                    expect(mock, 'Must have root').to.have.property('root');
-                    expect(mock.root, 'Root must have levelOne').to.have.property('levelOne');
-                    expect(mock.root, 'Root must not have level1').not.to.have.property('level1');
-                    expect(mock.root.levelOne).not.to.have.property('name');
-                    expect(mock.root.levelOne).to.have.property('nickname');
-                });
+            it('direct options\'s keys', () => {
+              const options = directOptions;
+              const thingMocker = mocker(sschema, options);
+              const mock = thingMocker.generate();
+              expect(mock, 'Must have root').to.have.property('root');
+              expect(mock.root, 'Root must have levelOne').to.have.property('levelOne');
+              expect(mock.root, 'Root must not have level1').not.to.have.property('level1');
+              expect(mock.root.levelOne).not.to.have.property('name');
+              expect(mock.root.levelOne).to.have.property('nickname');
             });
+
+            it('nested options\'s keys', () => {
+              const options = unflatten(directOptions);
+              const thingMocker = mocker(sschema, options);
+              const mock = thingMocker.generate();
+              expect(mock, 'Must have root').to.have.property('root');
+              expect(mock.root, 'Root must have levelOne').to.have.property('levelOne');
+              expect(mock.root, 'Root must not have level1').not.to.have.property('level1');
+              expect(mock.root.levelOne).not.to.have.property('name');
+              expect(mock.root.levelOne).to.have.property('nickname');
+            });
+          });
         });
-    });
+      });
 
-    describe('options.<propertyName>.type', () => {
+      describe('options.<propertyName>.type', () => {
         describe('string', () => {
-            const stringShema = new Schema({ str: String });
-            const StringThing = mongoose.model('StringThing', stringShema);
+          const stringShema = new Schema({ str: String });
+          const StringThing = mongoose.model('StringThing', stringShema);
 
-            it('email', () => {
-                const thingMocker = mocker(StringThing, { str: { type: 'email' } });
-                const mock = thingMocker.generate();
-                expect(mock.str).to.match(/[\w]+\@[\w]+.[\w]+/);
-            });
+          it('email', () => {
+            const thingMocker = mocker(StringThing, { str: { type: 'email' } });
+            const mock = thingMocker.generate();
+            expect(mock.str).to.match(/[\w]+\@[\w]+.[\w]+/);
+          });
         });
+      });
     });
+  });
 });
