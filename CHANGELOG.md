@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.2](https://github.com/faboulaws/fakingoose/compare/v1.5.1...v1.5.2) (2021-02-09)
+
+
+### Bug Fixes
+
+* comment out mongoose3 ([271170e](https://github.com/faboulaws/fakingoose/commit/271170ed3fbca42002063dafc996e2be4696f32b))
+* issue [#30](https://github.com/faboulaws/fakingoose/issues/30) ([3c18d6f](https://github.com/faboulaws/fakingoose/commit/3c18d6f3b8d6b02c72a95d15e2f377757c3756ca))
+
 ### [1.5.1](https://github.com/faboulaws/fakingoose/compare/v1.5.0...v1.5.1) (2020-11-15)
 
 ## [1.5.0](https://github.com/faboulaws/fakingoose/compare/v1.4.1...v1.5.0) (2020-11-15)
