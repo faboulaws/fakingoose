@@ -35,6 +35,9 @@ describe('mocker test', () => {
       living: Boolean,
       created: { type: Date },
       updated: { type: Date, default: Date.now },
+      dateMinMax: {type: Date, min: '2020-12-15', max: '2021-12-30'},
+      dateMin: {type: Date, min: '2020-12-15'},
+      dateMax: {type: Date,  max: '2021-12-30'},
       age: { type: Number, min: 18, max: 65 },
       mixed: Schema.Types.Mixed,
       _someId: Schema.Types.ObjectId,
@@ -147,6 +150,16 @@ describe('mocker test', () => {
         // date
         expect(mock).to.have.property('updated');
         expect(mock.updated).to.be.a('date');
+
+        // date - validation
+        const minDate = (new Date('2020-12-15')).getTime();
+        const maxDate = (new Date('2021-12-30')).getTime();
+        expect(mock.dateMinMax.getTime()).to.be.above(minDate - 1);
+        expect(mock.dateMinMax.getTime()).to.be.below(maxDate + 1)
+
+        expect(mock.dateMin.getTime()).to.be.above(minDate - 1);
+
+        expect(mock.dateMax.getTime()).to.be.below(maxDate + 1)
 
         // check dates array
         expect(mock).to.have.property('ofDates');
