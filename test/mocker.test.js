@@ -73,6 +73,12 @@ describe('mocker test', () => {
           type: Map,
           of: String,
         },
+        mapOfSchema: {
+          type: Map,
+          of: new Schema({
+            name: String
+          })
+        }
       });
     }
     const schema = new Schema(schemaDef);
@@ -195,9 +201,17 @@ describe('mocker test', () => {
           // map of string
           expect(mock).to.have.property('mapOfString');
           expect(mock.mapOfString).to.be.an('Map');
-          mock.mapOfString.values((value) => {
+
+          for(const value of mock.mapOfString.values()){
             expect(value).to.be.a('string');
-          });
+          }
+
+          // map of embedded Schema
+          expect(mock).to.have.property('mapOfSchema');
+          expect(mock.mapOfSchema).to.be.a('Map');
+          for(const value of mock.mapOfSchema.values()){
+            expect(value).to.be.an('object');
+          }
         }
       });
 
