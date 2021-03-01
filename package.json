@@ -1,6 +1,6 @@
 {
   "name": "fakingoose",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "Data mocker for mongoose schema",
   "repository": {
     "type": "git",
