@@ -321,7 +321,7 @@ describe('mocker test', () => {
 
       describe('generate(staticFields)', () => {
         const embed = new Schema({ name: String });
-        const thingShema = new Schema({
+        const thingSchemaDef = {
           str: { type: String },
           nested: { name: String },
           doubleNested: {
@@ -334,8 +334,7 @@ describe('mocker test', () => {
           ofString: [String],
           ofObject: [{ name: String }],
           ofEmbedded: [embed],
-        });
-
+        };
         const staticFields = {
           str: 'hello',
           nested: { name: 'nested' },
@@ -351,6 +350,8 @@ describe('mocker test', () => {
           ofEmbedded: [{ name: 'ofEmbedded' }, { name: 'ofEmbedded' }],
         };
 
+        const thingShema = new Schema(thingSchemaDef);
+
         it('should use static value', () => {
           const thingMocker = mocker(thingShema);
           const mock = thingMocker.generate(staticFields);
@@ -365,10 +366,44 @@ describe('mocker test', () => {
             'ofObject',
             'ofEmbedded',
           ];
+
           paths.forEach((path) => {
             expect(get(mock, path)).to.eql(get(staticFields, path));
           });
         });
+
+        if (mongoose.Types.Map) {
+          it('should use static value for map', () => {
+            const schemaDef = {
+              map: Map,
+              mapOfString: {
+                type: Map,
+                of: String,
+              },
+              mapOfSchema: {
+                type: Map,
+                of: new Schema({
+                  name: String,
+                }),
+              },
+            };
+
+
+            const staticFields = {
+              mapOfString: { key: 'mapOfString' },
+              mapOfSchema: { key: { name: 'mapOfSchema' } },
+            }
+            const thingShema = new Schema(schemaDef);
+            const thingMocker = mocker(thingShema);
+            const mock = thingMocker.generate(staticFields);
+            const paths = ['mapOfString', 'mapOfSchema'];
+            paths.forEach((path) => {
+              expect(get(mock, path)).to.eql(get(staticFields, path));
+            });
+          })
+        }
+
+
       });
 
       describe('options.<propertyName>.value', () => {
