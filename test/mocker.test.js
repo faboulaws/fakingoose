@@ -35,9 +35,9 @@ describe('mocker test', () => {
       living: Boolean,
       created: { type: Date },
       updated: { type: Date, default: Date.now },
-      dateMinMax: {type: Date, min: '2020-12-15', max: '2021-12-30'},
-      dateMin: {type: Date, min: '2020-12-15'},
-      dateMax: {type: Date,  max: '2021-12-30'},
+      dateMinMax: { type: Date, min: '2020-12-15', max: '2021-12-30' },
+      dateMin: { type: Date, min: '2020-12-15' },
+      dateMax: { type: Date, max: '2021-12-30' },
       age: { type: Number, min: 18, max: 65 },
       mixed: Schema.Types.Mixed,
       _someId: Schema.Types.ObjectId,
@@ -65,22 +65,6 @@ describe('mocker test', () => {
       ofEmbedded: [embedded],
     };
 
-
-    if (mongoose.Types.Map) {
-      Object.assign(schemaDef, {
-        map: Map,
-        mapOfString: {
-          type: Map,
-          of: String,
-        },
-        mapOfSchema: {
-          type: Map,
-          of: new Schema({
-            name: String
-          })
-        }
-      });
-    }
     const schema = new Schema(schemaDef);
 
     // example use
@@ -192,8 +176,29 @@ describe('mocker test', () => {
         expect(mock).to.have.property('ofMixed');
         expect(mock.ofMixed).to.be.an('array');
         expect(mock.ofMixed).to.have.lengthOf.above(1);
+      });
 
-        if (mongoose.Types.Map) {
+      if (mongoose.Types.Map) {
+        it('most generate mock for map', () => {
+          const mapSchema = {
+            map: Map,
+            mapOfString: {
+              type: Map,
+              of: String,
+            },
+            mapOfSchema: {
+              type: Map,
+              of: new Schema({
+                name: String
+              })
+            }
+          }
+
+          const MapModel = mongoose.model('MapModel', mapSchema)
+          const thingMocker = mocker(MapModel, {});
+          const _mock = thingMocker.generate();
+          const mock = new MapModel(_mock);
+
           // map
           expect(mock).to.have.property('map');
           expect(mock.map).to.be.an('Map');
@@ -202,18 +207,19 @@ describe('mocker test', () => {
           expect(mock).to.have.property('mapOfString');
           expect(mock.mapOfString).to.be.an('Map');
 
-          for(const value of mock.mapOfString.values()){
+          for (const value of mock.mapOfString.values()) {
             expect(value).to.be.a('string');
           }
 
           // map of embedded Schema
           expect(mock).to.have.property('mapOfSchema');
           expect(mock.mapOfSchema).to.be.a('Map');
-          for(const value of mock.mapOfSchema.values()){
+          for (const value of mock.mapOfSchema.values()) {
             expect(value).to.be.an('object');
           }
-        }
-      });
+        })
+      }
+
 
       describe('ObjectId', () => {
         const schema = new Schema({
