@@ -23,8 +23,11 @@ declare class Mocker {
     /**
      * @callback valueCallback
     * @typedef {Object} MockerFieldOption
-    * @property {string} [type] Depends on the field type for example a string can have the types email
-    * @property {(string|number|boolean|valueCallback)} [value] If the value is a function, then the function receives the current mock object as first argument and returns a value
+    * @property {string} [type] Depends on the field type for
+    *           example a string can have the types email
+    * @property {(string|number|boolean|valueCallback)} [value] If the value
+    *           is a function, then the function receives the current mock
+    *           object as first argument and returns a value
     * @property {boolean} [skip] When this option is present the field is skipped
     */
     /**
@@ -79,11 +82,14 @@ type StaticFields = {
 type valueCallback = () => any;
 type MockerFieldOption = {
     /**
-     * Depends on the field type for example a string can have the types email
+     * Depends on the field type for
+     * example a string can have the types email
      */
     type?: string;
     /**
-     * If the value is a function, then the function receives the current mock object as first argument and returns a value
+     * If the value
+     * is a function, then the function receives the current mock
+     * object as first argument and returns a value
      */
     value?: (string | number | boolean | valueCallback);
     /**
