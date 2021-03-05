@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/faboulaws/fakingoose/compare/v1.5.7...v2.0.0) (2021-03-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* factory is no longer a fault export.
+Old API:  `const factory = require('fakingoose');`.
+New API `const {factory} = require('fakingoose');`
+
+### Features
+
+* migration to typescript ([8e40c99](https://github.com/faboulaws/fakingoose/commit/8e40c992239931d72b574c247e13b2b781688534))
+
 ### [1.5.7](https://github.com/faboulaws/fakingoose/compare/v1.5.6...v1.5.7) (2021-03-04)
 
 ### [1.5.6](https://github.com/faboulaws/fakingoose/compare/v1.5.5...v1.5.6) (2021-03-03)
