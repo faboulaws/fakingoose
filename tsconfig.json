@@ -1,6 +1,5 @@
 {
     "include": [
-        "index.js",
         "lib/**/*"
     ],
     "exclude": [
@@ -8,9 +7,10 @@
         "test"
     ],
     "compilerOptions": {
-        "allowJs": true,
+        "target": "es6",
+        "module": "commonjs",
         "declaration": true,
-        "emitDeclarationOnly": true,
-        "outDir": "./"
+        "outDir": "./dist",
+        "rootDir": "./lib",
     }
 }

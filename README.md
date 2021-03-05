@@ -15,7 +15,7 @@ npm install fakingoose
 # Usage
 
 ``` js
-const factory = require('fakingoose');
+const {factory} = require('fakingoose');
 const entityFactory = factory(model, options);
 ```
 
@@ -32,7 +32,7 @@ const entityFactory = factory(model, options);
 
 ``` js
 const mongoose = require('mongoose');
-const factory = require('fakingoose');
+const {factory} = require('fakingoose');
 const {
     Schema
 } = mongoose;

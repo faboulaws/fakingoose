@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const factory = require('../');
+const {factory} = require('../');
 
 // const factory = require('fackingoose');
 

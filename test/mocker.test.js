@@ -7,7 +7,7 @@ const mongoose4 = require('mongoose4');
 const mongoose5 = require('mongoose5');
 const mongooseLatest = require('mongooseLatest');
 
-const mocker = require('../lib/mocker');
+const {factory: mocker} = require('../dist');
 
 const allOfType = (expectedType) => (array) => array.every((item) => (typeof item === expectedType));
 const allInstanceOf = (expectedType) => (array) => array.every((item) => (item instanceof expectedType));

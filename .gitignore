@@ -1,4 +1,12 @@
+# IDE
 .vscode
+
+# dependencies
 node_modules
+
+# misc
 .nyc_output/
 coverage
+
+# dist
+/dist

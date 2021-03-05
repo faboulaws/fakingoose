@@ -2,8 +2,13 @@ const Chance = require('chance');
 const set = require('lodash.set');
 const get = require('lodash.get');
 const flatten = require('flat');
+import {
+  Schema,
+  Document
+} from 'mongoose';
 const isPlainObject = require('lodash.isplainobject');
 const ObjectId = require('bson-objectid');
+import { FactoryOptions, GlobalOptions } from './types';
 
 const UNDEFINED_PROP_VIA_PARENT = Symbol('UndefinedPropFromParent');
 const OBJECT_ID_STRINGIFY_BY_DEFAULT = true;
@@ -214,27 +219,34 @@ const setIndirectValues = (parentPath, rootValue, indirectVals) => {
   return indirectVals;
 };
 
-const generate = (schema, { options, staticFields, globalOptions }) => {
+type GenerateOptions<T extends Document> = {
+  options: FactoryOptions,
+  staticFields: Partial<T>,
+  globalOptions: GlobalOptions
+}
+
+export function generate<T extends Document>(schema: Schema<T>, opts: GenerateOptions<T>): T {
+  const { options, staticFields, globalOptions } = opts;
   const mockObject = {};
   const fieldGeneration = [];
   const delayedFieldGeneration = [];
   const indirectValues = {};
-  const inderectValuesTasks = {};
+  const indirectValuesTasks = {};
   schema.eachPath((path) => {
     if (!path.includes('$*')) {
       if (typeof get(options, `${path}.value`) === 'function' || typeof get(options, `['${path}'].value`, undefined) === 'function') {
         delayedFieldGeneration.push(
           () => populateField(
             mockObject, {
-              schema, path, options, staticValue: get(staticFields, path, undefined), globalOptions,
-            },
+            schema, path, options, staticValue: get(staticFields, path, undefined), globalOptions,
+          },
           ),
         );
       } else {
         const indirectVals = getOptionFromParentProperty(path, options, 'value');
         if (indirectVals !== UNDEFINED_PROP_VIA_PARENT) {
           const [parentPath, value] = indirectVals;
-          if (!inderectValuesTasks[parentPath]) {
+          if (!indirectValuesTasks[parentPath]) {
             if (typeof value === 'function') {
               fieldGeneration.push(() => {
                 const rootValue = value(mockObject);
@@ -244,25 +256,24 @@ const generate = (schema, { options, staticFields, globalOptions }) => {
               const rootValue = value;
               setIndirectValues(parentPath, rootValue, indirectValues);
             }
-            inderectValuesTasks[parentPath] = true;
+            indirectValuesTasks[parentPath] = true;
           }
         }
 
         fieldGeneration.push(() => populateField(
           mockObject, {
-            schema,
-            path,
-            options,
-            staticValue: get(staticFields, path, undefined),
-            indirectValues,
-            globalOptions,
-          },
+          schema,
+          path,
+          options,
+          staticValue: get(staticFields, path, undefined),
+          indirectValues,
+          globalOptions,
+        },
         ));
       }
     }
   });
   [...fieldGeneration, ...delayedFieldGeneration].forEach((fn) => fn());
-  return mockObject;
+  return mockObject as T;
 };
 
-module.exports = { generate };

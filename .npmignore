@@ -7,3 +7,6 @@ coverage
 test
 .travis.yml
 .vscode
+lib
+index.ts
+tsconfig.json
