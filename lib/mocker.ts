@@ -37,7 +37,7 @@ class Mocker<T extends Document> {
   }
 }
 
-export function factory<T extends Document>(modelOrSchema: Schema<T> | Model<T>, options: FactoryOptions): Mocker<T> {
+export function factory<T extends Document>(modelOrSchema: Schema<T> | Model<T>, options: FactoryOptions = {}): Mocker<T> {
   return new Mocker<T>(modelOrSchema, options);
 }
 
