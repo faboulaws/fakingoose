@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/faboulaws/fakingoose/compare/v2.0.0...v2.0.1) (2021-05-14)
+
+
+### Bug Fixes
+
+* make options optional issue [#33](https://github.com/faboulaws/fakingoose/issues/33) ([d3c0e02](https://github.com/faboulaws/fakingoose/commit/d3c0e0285517bf0a8a85cac9115bed087b08e08c))
+
 ## [2.0.0](https://github.com/faboulaws/fakingoose/compare/v1.5.7...v2.0.0) (2021-03-05)
 
 
