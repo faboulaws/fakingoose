@@ -7,7 +7,7 @@ const mongoose4 = require('mongoose4');
 const mongoose5 = require('mongoose5');
 const mongooseLatest = require('mongooseLatest');
 
-const {factory: mocker} = require('../dist');
+const { factory: mocker } = require('../dist');
 
 const allOfType = (expectedType) => (array) => array.every((item) => (typeof item === expectedType));
 const allInstanceOf = (expectedType) => (array) => array.every((item) => (item instanceof expectedType));
@@ -220,6 +220,29 @@ describe('mocker test', () => {
         })
       }
 
+
+      describe('string', () => {
+        it('string at any level must work', () => {
+          const sch = {
+            arrayOfStringsWithEnum: [{ type: String, enum: ['string1', 'string2'] }],
+            arrayOfStrings: [String],
+            arrayOfStrings2: [{type:String}],
+          };
+          const Entity = mongoose.model('Entity', sch);
+          const entityMocker = mocker(Entity, {});
+          const data = entityMocker.generate()
+          
+          data.arrayOfStringsWithEnum.forEach(value => {
+            expect(['string1', 'string2']).to.include(value)
+          })
+          data.arrayOfStrings.forEach(value => {
+            expect(typeof value).to.equal('string')
+          })
+          data.arrayOfStrings2.forEach(value => {
+            expect(typeof value).to.equal('string')
+          })
+        })
+      })
 
       describe('ObjectId', () => {
         const schema = new Schema({

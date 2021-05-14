@@ -54,7 +54,7 @@ const generators = {
       const innerType = pathDef.caster.instance.toLowerCase();
       const generator = generators[innerType];
 
-      return Array.from(Array(num)).map(() => generator(pathDef.options,
+      return Array.from(Array(num)).map(() => generator(pathDef.caster,
         { options, globalOptions }));
     } if (typeof pathDef.caster === 'function') {
       // eslint-disable-next-line no-use-before-define
