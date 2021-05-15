@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.3](https://github.com/faboulaws/fakingoose/compare/v2.0.2...v2.0.3) (2021-05-15)
+
+
+### Bug Fixes
+
+* [#33](https://github.com/faboulaws/fakingoose/issues/33) optional generic type inference ([010a2c0](https://github.com/faboulaws/fakingoose/commit/010a2c04696c3f075e3b8869bcc48c638d5e1c2f))
+* [#33](https://github.com/faboulaws/fakingoose/issues/33) optional generic type inference ([ce827df](https://github.com/faboulaws/fakingoose/commit/ce827df40c45b85a7c1a3d912a08d41ca749ec74))
+
 ### [2.0.2](https://github.com/faboulaws/fakingoose/compare/v2.0.1...v2.0.2) (2021-05-14)
 
 
