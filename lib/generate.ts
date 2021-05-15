@@ -221,7 +221,7 @@ const setIndirectValues = (parentPath, rootValue, indirectVals) => {
 
 type GenerateOptions<T extends Document> = {
   options: FactoryOptions,
-  staticFields: Partial<T>,
+  staticFields: Record<string, unknown>,
   globalOptions: GlobalOptions
 }
 
