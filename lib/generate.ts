@@ -170,7 +170,7 @@ function populateField(mockObject, {
     const pathDef = schema.path(path);
     const type = pathDef.instance.toLowerCase();
 
-    if (staticValue !== undefined && !isPlainObject(staticValue)) {
+    if (staticValue !== undefined) {
       value = staticValue;
     } else if (staticValue !== undefined && type === 'map') {
       value = staticValue;

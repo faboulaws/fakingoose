@@ -23,7 +23,7 @@ describe('mocker test', () => {
 
   tests.forEach((test) => {
     const { mongoose } = test;
-    const { Schema } = mongoose;
+    const { Schema, Types } = mongoose;
     const embedded = new Schema({ name: String, number: Number });
 
     const schemaDef = {
@@ -394,6 +394,21 @@ describe('mocker test', () => {
             expect(get(mock, path)).to.eql(get(staticFields, path));
           });
         });
+
+        it('allow static values as object', () => {
+          const options = {
+            location: { value: { internal: { type: 'Point', coordinates: [1, 1] } } },
+          };
+          const Example = new Schema({ location: Object });
+
+          const exampleFactory = mocker(Example, options).setGlobalObjectIdOptions({ tostring: false });
+
+          const mock1 = exampleFactory.generate({ _id: Types.ObjectId('60b4b91e9339c965303aaa10') });
+          const location = { internal: { type: 'Point', coordinates: [3, 3] } }
+          const mock2 = exampleFactory.generate({ _id: Types.ObjectId('60b4b91e9339c965303baa11'), location });
+          expect(mock1.location).to.equal(options.location.value)
+          expect(mock2.location).to.equal(location)
+        })
 
         if (mongoose.Types.Map) {
           it('should use static value for map', () => {
