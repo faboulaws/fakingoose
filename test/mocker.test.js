@@ -698,6 +698,30 @@ describe('mocker test', () => {
           });
         });
       });
+
+      describe('generate() override options', () => {
+        it('must use the correct factory options', () => {
+          const schema = new Schema({
+            updated: { type: Date, default: Date.now },
+            title: String,
+            content: String,
+          });
+          const options = {
+            updated: {
+              skip: true
+            }
+          };
+          
+          const myFactory = mocker(schema, options);
+          const mock1 = myFactory.generate({});
+          expect(mock1).not.to.haveOwnProperty('updated')
+          expect(mock1).to.haveOwnProperty('title')
+
+          const mock2 = myFactory.generate({}, { title: { skip: true } });
+          expect(mock2).to.haveOwnProperty('updated')
+          expect(mock2).not.to.haveOwnProperty('title')
+        })
+      })
     });
   });
 });

@@ -28,9 +28,9 @@ class Mocker<T extends Document> {
     return this;
   }
 
-  generate(staticFields: Record<string,unknown> = {}) {
+  generate(staticFields: Record<string,unknown> = {}, overrideOptions: FactoryOptions = undefined) {
     return generate<T>(this.schema, {
-      options: this.options,
+      options: overrideOptions || this.options,
       staticFields,
       globalOptions: this.globalOptions,
     });
