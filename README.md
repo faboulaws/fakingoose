@@ -6,16 +6,19 @@
 
 An automatic mock data generator for mongoose using schema definition.
 
-#  Install
+##  Install
 
-``` 
+```
+
 npm install fakingoose
 ```
 
-# Usage
+## Usage
 
-``` js
-const {factory} = require('fakingoose');
+```js
+const {
+    factory
+} = require('fakingoose');
 const entityFactory = factory(model, options);
 ```
 
@@ -26,13 +29,17 @@ const entityFactory = factory(model, options);
   + options.\<propertyName\>.value **\<mixed\>**: A static value for each generated mock object.
   + options.\<propertyName\>.value: **\<function\>** a function for generating a dynamic value per item. This function receives the mock object as first argument.
   + options.\<propertyName\>.skip **\<boolean\>**: When set to `true` would skip the field.
-  + options.\<propertyName\>.type **\<string\>**: The sub-type for this field type. For example \<String\> schema type supports `email` , `firsname` and `lastname` .
+  + options.\<propertyName\>.type **\<string\>**: The sub-type for this field type. For example \<String\> schema type supports `email` ,  `firsname` and `lastname` .
+  + `options.\<propertyName\>.populateWithSchema`: Uses a schema to generate mocks of related models
+  + `options.\<propertyName\>.populateWithFactory`: Uses another factory to generate mocks of related models. This options provides more flexibility than `populateWithSchema`, taking advantage of custom behaviours  of factory via Factory options.
 
-# Usage example
+## Usage example
 
-``` js
+```js
 const mongoose = require('mongoose');
-const {factory} = require('fakingoose');
+const {
+    factory
+} = require('fakingoose');
 const {
     Schema
 } = mongoose;
@@ -101,7 +108,7 @@ const mock = blogFactory.generate({
 **sample output**
   
 
-``` json
+```json
 {
   "title":"8tnkcjplr",
   "author":{
@@ -131,12 +138,12 @@ const mock = blogFactory.generate({
 }
  ```
 
-# Define options for nested properties
+## Define options for nested properties
 
  To define options for nested a property use the nested property path (property names sperated by a dot).
  Example: 
 
-``` js
+```js
 const options = {
     "meta.votes": {
         value: 0
@@ -145,14 +152,17 @@ const options = {
         skip: true
     } // skip value for 'favs' property under meta
 }
-``` 
+``
+`
 
-# Skipping multiple nested properties
+## Skipping multiple nested properties
 
 Multiple nested properties can be skipped from parent property.
 Example:
 
-```js
+`
+``
+js
 const accountSchema = new mongoose.Schema({
     user: {
         generalInfo: {
@@ -171,7 +181,7 @@ const accountFactory = factory(accountSchema, options);
 
 To generate mocks without an address define options as below
 
-``` js
+```js
 const options = {
     'user.address': {
         skip: true
@@ -182,7 +192,8 @@ const options = {
  or 
 
  
-``` js
+
+```js
 const options = {
     user: {
         address: {
@@ -198,68 +209,214 @@ then
 const mockObject = accountFactory.generate(options);
 ```
 
-# Generating ObjectId values
-When generating ObjectId values, you can choose to Stringify the generated ObjectId by using the `tostring` option. By default this options is `true`, so all generated ObjectIds would be converted to a String. Set `tostring` to false to disable this behaviour.
+## Generating ObjectId values
+
+When generating ObjectId values, you can choose to Stringify the generated ObjectId by using the `tostring` option. By default this options is `true` , so all generated ObjectIds would be converted to a String. Set `tostring` to false to disable this behaviour.
 
 Example: In the snippet below all ObjectIds generated are not stringified.
+
 ```js
 const friendSchema = new Schema({
     id: Schema.Types.ObjectId
-    friendIds: [{type: Schema.Types.ObjectId}],
+    friendIds: [{
+        type: Schema.Types.ObjectId
+    }],
     bestFriend: {
         id: Schema.Types.ObjectId
     }
 });
 
-const amigoFactory = factory(friendSchema, { 
-    id: { tostring: false }
-    friendIds: { tostring: false }
-    'bestFriend.id': { tostring: false }
-}); 
+const amigoFactory = factory(friendSchema, {
+    id: {
+        tostring: false
+    }
+    friendIds: {
+        tostring: false
+    }
+    'bestFriend.id': {
+        tostring: false
+    }
+});
 ```
 
-## Global settings
-To disable stringification globally use `factory.setGlobalObjectIdOptions`.
+### Global settings
+
+To disable stringification globally use `factory.setGlobalObjectIdOptions` .
 
 Example:
- ```js
+ 
+
+```js
 const friendSchema = new Schema({
     id: Schema.Types.ObjectId
-    friendIds: [{type: Schema.Types.ObjectId}],
+    friendIds: [{
+        type: Schema.Types.ObjectId
+    }],
     bestFriend: {
         id: Schema.Types.ObjectId
     }
 });
 
-const amigoFactory = factory(friendSchema).setGlobalObjectIdOptions({ tostring: false }); 
+const amigoFactory = factory(friendSchema).setGlobalObjectIdOptions({
+    tostring: false
+});
 ```
 
-# Generating decimal ([Decimal128](https://developer.mongodb.com/quickstart/bson-data-types-decimal128)) values
-When generating decimal values, you can choose to Stringify the generated number by using the `tostring` option. By default this options is `true`, so all generated numbers would be converted to a String. Set `tostring` to false to disable this behaviour.
+## Generating mocks for related models ([Populate](https://mongoosejs.com/docs/populate.html))
+
+Mongoose provides an API for automatically replacing the specified paths in the document with document(s) from other collection(s). This package provides a similar functionality when generating mocks.
+
+An example: In the snippet below we have two schemas, `activitySchema` & `personSchema` .
+
+```javascript
+const activitySchema = new mongoose.Schema({
+    name: String,
+    value: String,
+});
+
+const personSchema = new mongoose.Schema({
+    email: String,
+    name: {
+        type: String,
+    },
+    activities: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'activity'
+    }],
+});
+```
+
+When generating mock data from the `personSchema` we should get the sample below
+
+```javascript
+{
+    email: 'l7@eiwtef%(pzitx',
+    name: 'ym](ht7ucas*',
+    activities: ['60f1e810a8b8ac392c3869b7', '60f1e810a8b8ac392c3869b8'],
+    _id: '60f1e810a8b8ac392c3869b9'
+}
+```
+
+In some cases we might want to receive activity data instead of activity ID in the `activities` property, so we have a structure like below.
+
+```javascript
+ {
+     email: ')5b2[dj@@)p91(',
+     name: 'qo[jk!',
+     activities: [{
+             name: '7^*8h^@!zp^!*hqwn',
+             value: ']55f$hmva',
+             _id: '60f1e51dead56f35c7ed4f62'
+         },
+         {
+             name: 'r!cv!k!p#vqfqt4a9k',
+             value: '$@6k!z&oflj6',
+             _id: '60f1e51dead56f35c7ed4f63'
+         }
+     ],
+     _id: '60f1e51dead56f35c7ed4f64'
+ }
+```
+
+Let's look at two seperate ways we can achieve this:
+
+* `options.\<propertyName\>.populateWithSchema`: Uses a schema to generate mocks of related models.
+
+* `options.\<propertyName\>.populateWithFactory`: Uses another factory to generate mocks of related models. This options provides more flexibility than `populateWithSchema`, taking advantage of custom behaviors  of factory via Factory options.
+
+### Example: options.populateWithFactory
+
+```javascript
+  const activityFactory = mocker(activitySchema)
+
+  const personFactory = mocker(personSchema, {
+      activities: {
+          populateWithFactory: activityFactory
+      }
+  })
+  const mock = personFactory.generate()
+```
+
+### Example: options.populateWithSchema
+
+```javascript
+const myFactory = mocker(schema, {
+    activities: {
+        populateWithSchema: activitySchema
+    }
+})
+const mock = myFactory.generate()
+```
+
+## Generating decimal ([Decimal128](https://developer.mongodb.com/quickstart/bson-data-types-decimal128)) values
+
+When generating decimal values, you can choose to Stringify the generated number by using the `tostring` option. By default this options is `true` , so all generated numbers would be converted to a String. Set `tostring` to false to disable this behaviour.
 
 Example: In the snippet below all numbers generated are not stringified.
+
 ```js
 const productSchema = new Schema({
     price: Schema.Types.Decimal128
 });
 
 const productFactory = factory(productSchema, {
-    price: { tostring: false }
-}); 
+    price: {
+        tostring: false
+    }
+});
 ```
-## Global settings
-To disable stringification globally use `factory.setGlobalDecimal128Options`.
+
+### Global settings
+
+To disable stringification globally use `factory.setGlobalDecimal128Options` .
 
 Example:
- ```js
+ 
+
+```javascript
 const productSchema = new Schema({
     price: Schema.Types.Decimal128
 });
 
-const productFactory = factory(productSchema).setGlobalDecimal128Options({ tostring: false }); 
+const productFactory = factory(productSchema).setGlobalDecimal128Options({
+    tostring: false
+});
 ```
 
-# Supported Types
+## Override factory options per mock generated
+
+I some cases we want to override options that we used to initialise a factory. These options can be overridden in the `generate()` method of the factory.
+
+### Example
+
+```javascript
+const schema = new Schema({
+    updated: {
+        type: Date,
+        default: Date.now
+    },
+    title: String,
+    content: String,
+});
+
+const options = {
+    updated: {
+        skip: true
+    }
+};
+
+const myFactory = mocker(schema, options);
+const mockWithoutUpdated = myFactory.generate({}); // here use options used to initilize the factory. We skip the "updated: field
+
+const mockWithoutTitle = myFactory.generate({}, { // here use custom options. We skip the "title: field
+    title: {
+        skip: true
+    }
+});
+
+```
+
+## Supported Types
 
 * String
 * Array
@@ -273,7 +430,6 @@ const productFactory = factory(productSchema).setGlobalDecimal128Options({ tostr
 * Date
 * Map
 
-# Mongoose version Support
+## Mongoose version Support
 
 Version 4.x and 5.x are supported.
-

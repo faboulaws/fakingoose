@@ -711,7 +711,7 @@ describe('mocker test', () => {
               skip: true
             }
           };
-          
+
           const myFactory = mocker(schema, options);
           const mock1 = myFactory.generate({});
           expect(mock1).not.to.haveOwnProperty('updated')
@@ -720,6 +720,65 @@ describe('mocker test', () => {
           const mock2 = myFactory.generate({}, { title: { skip: true } });
           expect(mock2).to.haveOwnProperty('updated')
           expect(mock2).not.to.haveOwnProperty('title')
+        })
+      })
+
+      describe('options.populate', () => {
+        it('options.populateWithSchema', () => {
+          const activitySchema = new mongoose.Schema({
+            name: String,
+            value: String,
+          });
+
+          const schema = new mongoose.Schema(
+            {
+              email: String,
+              name: {
+                type: String,
+              },
+              activities: [{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'activity'
+              }],
+            }
+          );
+
+          const myFactory = mocker(schema, { activities: { populateWithSchema: activitySchema } })
+          const mock = myFactory.generate()
+          mock.activities.forEach(activity => {
+            expect(activity).to.haveOwnProperty('name')
+            expect(activity).to.haveOwnProperty('value')
+          })
+        })
+
+        it('options.populateWithFactory', () => {
+          const activitySchema = new mongoose.Schema({
+            name: String,
+            value: String,
+          });
+
+
+          const schema = new mongoose.Schema(
+            {
+              email: String,
+              name: {
+                type: String,
+              },
+              activities: [{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'activity'
+              }],
+            }
+          );
+
+          const activityFactory = mocker(activitySchema)
+
+          const myFactory = mocker(schema, { activities: { populateWithFactory: activityFactory } })
+          const mock = myFactory.generate()
+          mock.activities.forEach(activity => {
+            expect(activity).to.haveOwnProperty('name')
+            expect(activity).to.haveOwnProperty('value')
+          })
         })
       })
     });

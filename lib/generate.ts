@@ -6,9 +6,16 @@ import {
   Schema,
   Document
 } from 'mongoose';
+import { factory } from './mocker';
 const isPlainObject = require('lodash.isplainobject');
 const ObjectId = require('bson-objectid');
-import { FactoryOptions, GlobalOptions } from './types';
+import { FactoryOptions, GlobalOptions, MockerFieldOption, isStringFieldOptions,  isPopulateWithFactory, isPopulateWithSchema } from './types';
+
+export type GeneratorOptions = {
+  options: MockerFieldOption,
+  staticFields: Record<string, unknown>,
+  globalOptions: GlobalOptions
+}
 
 const UNDEFINED_PROP_VIA_PARENT = Symbol('UndefinedPropFromParent');
 const OBJECT_ID_STRINGIFY_BY_DEFAULT = true;
@@ -30,11 +37,11 @@ function getRandomInclusive(min, max) {
 }
 
 const generators = {
-  string: (pathDef, { options }) => {
+  string: (pathDef, { options }: GeneratorOptions) => {
     if (Array.isArray(pathDef.enumValues) && pathDef.enumValues.length) {
       return chance.pickone(pathDef.enumValues);
     }
-    if (options && options.type) {
+    if (isStringFieldOptions(options)) {
       switch (options.type) {
         case 'email':
           return chance.email();
@@ -63,7 +70,16 @@ const generators = {
     }
     return null;
   },
-  objectid: (pathDef, { options, globalOptions }) => {
+  objectid: (pathDef, { options, globalOptions }: GeneratorOptions) => {
+
+    if ( isPopulateWithFactory(options)) {
+      return options.populateWithFactory.generate()
+    } else if (isPopulateWithSchema(options)) {
+      const mockGen = factory(options.populateWithSchema)
+      return mockGen.generate()
+    }
+
+
     if (get(options, 'tostring', OBJECT_ID_STRINGIFY_BY_DEFAULT) === false || get(globalOptions, 'objectid.tostring', OBJECT_ID_STRINGIFY_BY_DEFAULT) === false) {
       return ObjectId();
     }

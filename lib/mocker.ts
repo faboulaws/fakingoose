@@ -7,7 +7,7 @@ import {
 import { generate } from './generate';
 import { FactoryOptions, GlobalOptions, GlobalObjectIdOptions, GlobalDecimal128Options } from './types'
 
-class Mocker<T extends Document> {
+export class Mocker<T extends Document> {
   schema: Schema<T>
   globalOptions: GlobalOptions;
   options: FactoryOptions;
