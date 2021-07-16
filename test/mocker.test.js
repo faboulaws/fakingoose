@@ -226,12 +226,12 @@ describe('mocker test', () => {
           const sch = {
             arrayOfStringsWithEnum: [{ type: String, enum: ['string1', 'string2'] }],
             arrayOfStrings: [String],
-            arrayOfStrings2: [{type:String}],
+            arrayOfStrings2: [{ type: String }],
           };
           const Entity = mongoose.model('Entity', sch);
           const entityMocker = mocker(Entity, {});
           const data = entityMocker.generate()
-          
+
           data.arrayOfStringsWithEnum.forEach(value => {
             expect(['string1', 'string2']).to.include(value)
           })
@@ -586,6 +586,31 @@ describe('mocker test', () => {
             expect(mock.root).to.have.property('nickname');
             expect(mock.root).not.to.have.property('name');
           });
+
+          it('should skip property of object inside an array', () => {
+            const schema = new Schema({
+              information: [{
+                updated: { type: Date, default: Date.now },
+                title: String,
+                content: String,
+              }]
+            });
+
+            const options = {
+              information: {
+                updated: {
+                  skip: true
+                }
+              }
+            };
+
+            const myFactory = mocker(schema, options);
+
+            const mock = myFactory.generate();
+            mock.information.forEach(info => {
+              expect(info).not.to.haveOwnProperty('updated')
+            })
+          })
         });
 
         describe('indirect skip (from parent)', () => {
