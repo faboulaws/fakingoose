@@ -159,8 +159,7 @@ const options = {
 Multiple nested properties can be skipped from parent property.
 Example:
 
-```
-js
+```js
 const accountSchema = new mongoose.Schema({
     user: {
         generalInfo: {
