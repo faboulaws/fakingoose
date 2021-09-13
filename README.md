@@ -176,7 +176,7 @@ const accountSchema = new mongoose.Schema({
 const accountFactory = factory(accountSchema, options);
 ```
 
-To generate mocks without an address define options as below
+To generate mocks without an address define options as below you have to override the default factory's options:
 
 ```js
 const options = {
@@ -186,9 +186,8 @@ const options = {
 }
 ```
 
- or 
+ or
 
- 
 
 ```js
 const options = {
@@ -203,7 +202,7 @@ const options = {
 then
 
 ```js
-const mockObject = accountFactory.generate(options);
+const mockObject = accountFactory.generate({}, options);
 ```
 
 ## Generating ObjectId values
@@ -214,7 +213,7 @@ Example: In the snippet below all ObjectIds generated are not stringified.
 
 ```js
 const friendSchema = new Schema({
-    id: Schema.Types.ObjectId
+    id: Schema.Types.ObjectId,
     friendIds: [{
         type: Schema.Types.ObjectId
     }],
@@ -226,10 +225,10 @@ const friendSchema = new Schema({
 const amigoFactory = factory(friendSchema, {
     id: {
         tostring: false
-    }
+    },
     friendIds: {
         tostring: false
-    }
+    },
     'bestFriend.id': {
         tostring: false
     }
@@ -245,7 +244,7 @@ Example:
 
 ```js
 const friendSchema = new Schema({
-    id: Schema.Types.ObjectId
+    id: Schema.Types.ObjectId,
     friendIds: [{
         type: Schema.Types.ObjectId
     }],
