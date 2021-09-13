@@ -152,17 +152,14 @@ const options = {
         skip: true
     } // skip value for 'favs' property under meta
 }
-``
-`
+```
 
 ## Skipping multiple nested properties
 
 Multiple nested properties can be skipped from parent property.
 Example:
 
-`
-``
-js
+```js
 const accountSchema = new mongoose.Schema({
     user: {
         generalInfo: {
