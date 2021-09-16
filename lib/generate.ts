@@ -1,7 +1,7 @@
-import  Chance from 'chance';
-import set from 'lodash.set';
-import  get from 'lodash.get';
-import flatten from'flat';
+import  * as Chance from 'chance';
+import * as set from 'lodash.set';
+import  * as get from 'lodash.get';
+import * as flatten from 'flat';
 import {
   Schema,
   Document
@@ -80,9 +80,9 @@ const generators = {
 
 
     if (get(options, 'tostring', OBJECT_ID_STRINGIFY_BY_DEFAULT) === false || get(globalOptions, 'objectid.tostring', OBJECT_ID_STRINGIFY_BY_DEFAULT) === false) {
-      return ObjectId();
+      return new ObjectId();
     }
-    return ObjectId().toString();
+    return new ObjectId().toString();
   },
   number: (pathDef) => {
     if (pathDef.options && Array.isArray(pathDef.options.enum) && pathDef.options.enum.length) {
