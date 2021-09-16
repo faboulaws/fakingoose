@@ -22,7 +22,7 @@
     "pub": "git push --follow-tags origin master && npm publish",
     "coverage": "nyc npm test",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "cover": "npm i mongoose && npm run coverage && npm run coveralls",
+    "cover": "npm run coverage && npm run coveralls",
     "version:inc": "npm run prebuild && npm run build &&  standard-version",
     "release": "npm run version:inc && npm run pub",
     "test:and:release": " test:all && standard-version"
