@@ -1,7 +1,7 @@
 # fakingoose
 
 [![Known Vulnerabilities](https://snyk.io/test/github/faboulaws/fakingoose/badge.svg)](https://snyk.io/test/github/faboulaws/fakingoose)
-[![Build Status](https://travis-ci.org/faboulaws/fakingoose.svg?branch=master)](https://travis-ci.org/faboulaws/fakingoose)
+[![Build Status](https://app.travis-ci.com/faboulaws/fakingoose.svg?branch=master)](https://app.travis-ci.com/faboulaws/fakingoose)
 [![Coverage Status](https://coveralls.io/repos/github/faboulaws/fakingoose/badge.svg?branch=master)](https://coveralls.io/github/faboulaws/fakingoose?branch=master)
 
 An automatic mock data generator for mongoose using schema definition.
