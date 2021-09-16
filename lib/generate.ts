@@ -1,14 +1,13 @@
-const Chance = require('chance');
-const set = require('lodash.set');
-const get = require('lodash.get');
-const flatten = require('flat');
+import  Chance from 'chance';
+import set from 'lodash.set';
+import  get from 'lodash.get';
+import flatten from'flat';
 import {
   Schema,
   Document
 } from 'mongoose';
+import  ObjectId from 'bson-objectid';
 import { factory } from './mocker';
-const isPlainObject = require('lodash.isplainobject');
-const ObjectId = require('bson-objectid');
 import { FactoryOptions, GlobalOptions, MockerFieldOption, isStringFieldOptions,  isPopulateWithFactory, isPopulateWithSchema } from './types';
 
 export type GeneratorOptions = {
@@ -294,5 +293,5 @@ export function generate<T extends Document>(schema: Schema<T>, opts: GenerateOp
   });
   [...fieldGeneration, ...delayedFieldGeneration].forEach((fn) => fn());
   return mockObject as T;
-};
+}
 
