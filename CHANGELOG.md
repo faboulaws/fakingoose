@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/faboulaws/fakingoose/compare/v2.2.0...v2.2.1) (2021-09-16)
+
+
+### Bug Fixes
+
+* use enum values when generating numbers. fixes issue [#47](https://github.com/faboulaws/fakingoose/issues/47) ([29d832c](https://github.com/faboulaws/fakingoose/commit/29d832cef3b5daad4e91aa24bf257a126fd48fc6))
+
 ## [2.2.0](https://github.com/faboulaws/fakingoose/compare/v2.1.0...v2.2.0) (2021-07-16)
 
 
