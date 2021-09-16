@@ -86,6 +86,9 @@ const generators = {
     return ObjectId().toString();
   },
   number: (pathDef) => {
+    if (pathDef.options && Array.isArray(pathDef.options.enum) && pathDef.options.enum.length) {
+      return chance.pickone(pathDef.options.enum);
+    }
     const numOpt = ['min', 'max'].reduce((opts, att) => {
       if (pathDef.options && pathDef.options[att]) {
         const attrValue = Array.isArray(pathDef.options[att]) ? pathDef.options[att][0]

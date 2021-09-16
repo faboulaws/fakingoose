@@ -342,6 +342,22 @@ describe('mocker test', () => {
         });
       });
 
+      describe('number', () => {
+        const schema = new Schema({
+          myNumber: { type: Schema.Types.Number, enum: [0, 1, 2] } ,
+          arrayOfNumbers: [{ type: Schema.Types.Number , enum: [0, 1, 2]}],
+          nestedNumbers: { nestedValue: { type: Schema.Types.Number, enum: [0, 1, 2] } },
+        });
+
+        it('must generate a number using enum', () => {
+          const factory = mocker(schema);
+          const mockObject = factory.generate();
+          expect([0, 1, 2]).to.include(mockObject.myNumber)
+          expect([0, 1, 2]).to.include.members(mockObject.arrayOfNumbers)
+          expect([0, 1, 2]).to.include(mockObject.nestedNumbers.nestedValue)
+        });
+      })
+
       describe('generate(staticFields)', () => {
         const embed = new Schema({ name: String });
         const thingSchemaDef = {
