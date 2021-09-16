@@ -17,5 +17,5 @@ jobs:
       script: npm run build && npm run test
 
     - stage: coverage
-      node_js: 9
+      node_js: 14
       script: npm run cover
