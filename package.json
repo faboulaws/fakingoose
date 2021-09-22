@@ -40,7 +40,7 @@
   "license": "MIT",
   "dependencies": {
     "bson-objectid": "^2.0.1",
-    "chance": "^1.1.6",
+    "chance": "^1.1.8",
     "flat": "^5.0.2",
     "lodash.get": "^4.4.2",
     "lodash.isplainobject": "^4.0.6",
