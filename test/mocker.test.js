@@ -715,6 +715,25 @@ describe('mocker test', () => {
         });
       });
 
+      describe('options.<propertyName>.size', () => {
+        describe('array', () => {
+          const arraySchema = new Schema({ arr: [String] });
+          const ArrayThing = mongoose.model('ArrayThing', arraySchema);
+
+          it('default size', () => {
+            const thingMocker = mocker(ArrayThing);
+            const mock = thingMocker.generate();
+            expect(mock.arr).to.have.lengthOf(2);
+          });
+
+          it('custom size', () => {
+            const thingMocker = mocker(ArrayThing, { arr: { size: 10 } });
+            const mock = thingMocker.generate();
+            expect(mock.arr).to.have.lengthOf(10);
+          });
+        });
+      });
+
       describe('generate() override options', () => {
         it('must use the correct factory options', () => {
           const schema = new Schema({

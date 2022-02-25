@@ -3,7 +3,7 @@ import { Mocker } from "./mocker";
 
 type ValueCallback = (mockObject: Document) => any;
 
-export type MockerFieldOption = SkipFieldOptions | FieldValueOptions | StringFieldOptions | ObjectIdFieldOptions<any>;
+export type MockerFieldOption = SkipFieldOptions | FieldValueOptions | StringFieldOptions | SizeFieldOptions | ObjectIdFieldOptions<any>;
 export interface SkipFieldOptions {
 
   /**
@@ -27,6 +27,13 @@ export interface StringFieldOptions {
     * example a string can have the types email, firstname or lastname
     */
   type: 'email' | 'firstname' | 'lastname';
+}
+
+export interface SizeFieldOptions {
+  /**
+    * Is only used for array fields
+    */
+  size: number;
 }
 
 export type ObjectIdFieldOptions<T extends Document> = PopulateWithFactory<T> | PopulateWithSchema<T>
