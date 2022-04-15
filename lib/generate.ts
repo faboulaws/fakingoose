@@ -89,7 +89,7 @@ const generators = {
       return chance.pickone(pathDef.options.enum);
     }
     const numOpt = ['min', 'max'].reduce((opts, att) => {
-      if (pathDef.options && (pathDef.options[att] || pathDef.options[att] === 0)) {
+      if (pathDef.options && (att in pathDef.options)) {
         const attrValue = Array.isArray(pathDef.options[att]) ? pathDef.options[att][0]
           : pathDef.options[att];
         return Object.assign(opts, { [att]: attrValue });
