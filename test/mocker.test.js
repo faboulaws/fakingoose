@@ -72,7 +72,7 @@ describe('mocker test', () => {
 
     const Thing = mongoose.model('Thing', schema);
 
-    describe.only(`mongoose@${test.version}`, () => {
+    describe(`mongoose@${test.version}`, () => {
       it('must generate mock', () => {
         const thingMocker = mocker(Thing, {});
         const _mock = thingMocker.generate();
