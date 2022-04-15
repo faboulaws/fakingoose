@@ -60,6 +60,7 @@ describe('mocker test', () => {
         stuff: { type: String, lowercase: true, trim: true },
         count: Number,
       },
+      percent: { type: Number, min: 0, max: 100},
 
       embedded,
       ofEmbedded: [embedded],
@@ -114,6 +115,9 @@ describe('mocker test', () => {
         // check numbers
         expect(mock.age).to.be.a('number');
         expect(mock.age).to.be.within(18, 65);
+
+        expect(mock.percent).to.be.a('number');
+        expect(mock.percent).to.be.within(0, 100);
 
         expect(mock.positiveNumber).to.be.a('number');
         expect(mock.age).to.be.above(0);

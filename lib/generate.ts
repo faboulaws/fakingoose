@@ -89,7 +89,7 @@ const generators = {
       return chance.pickone(pathDef.options.enum);
     }
     const numOpt = ['min', 'max'].reduce((opts, att) => {
-      if (pathDef.options && pathDef.options[att]) {
+      if (pathDef.options && (pathDef.options[att] || pathDef.options[att] === 0)) {
         const attrValue = Array.isArray(pathDef.options[att]) ? pathDef.options[att][0]
           : pathDef.options[att];
         return Object.assign(opts, { [att]: attrValue });
@@ -294,4 +294,3 @@ export function generate<T extends Document>(schema: Schema<T>, opts: GenerateOp
   [...fieldGeneration, ...delayedFieldGeneration].forEach((fn) => fn());
   return mockObject as T;
 }
-
