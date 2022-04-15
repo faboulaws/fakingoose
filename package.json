@@ -39,7 +39,7 @@
   "author": "Lod Lawson-Betum <faboulaws@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "bson-objectid": "^2.0.1",
+    "bson-objectid": "^2.0.3",
     "chance": "^1.1.6",
     "flat": "^5.0.2",
     "lodash.get": "^4.4.2",
