@@ -20,6 +20,8 @@ const UNDEFINED_PROP_VIA_PARENT = Symbol('UndefinedPropFromParent');
 const OBJECT_ID_STRINGIFY_BY_DEFAULT = true;
 const DECIMAL_128_STRINGIFY_BY_DEFAULT = true;
 
+const ARRAY_SIZE_DEFAULT = 2;
+
 const chance = new Chance();
 
 function getTypeOf(type) {
@@ -55,7 +57,7 @@ const generators = {
     return pathDef.lowercase ? chance.string().toLowerCase() : chance.string();
   },
   array: (pathDef, { options, staticFields, globalOptions }) => {
-    const num = 2;
+    const num = get(options, 'size', ARRAY_SIZE_DEFAULT);
     if (typeof pathDef.caster === 'object') {
       const innerType = pathDef.caster.instance.toLowerCase();
       const generator = generators[innerType];
