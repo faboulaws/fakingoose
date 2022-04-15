@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/faboulaws/fakingoose/compare/v2.2.1...v2.3.0) (2022-04-15)
+
+
+### Features
+
+* update number generator to evaluate min:0 ([5ca6eff](https://github.com/faboulaws/fakingoose/commit/5ca6eff25da4c0ce40cd1a2a2edfb9737b43bc70))
+
+
+### Bug Fixes
+
+* bson-objectid upgrade is breaking tests ([9400189](https://github.com/faboulaws/fakingoose/commit/9400189dec9fc505aebb424eede37264341c9dc7))
+* update bson-objectid version ([bff46b1](https://github.com/faboulaws/fakingoose/commit/bff46b1a4518f8e3d803362ca8ddd5c6078b2e31))
+
 ### [2.2.1](https://github.com/faboulaws/fakingoose/compare/v2.2.0...v2.2.1) (2021-09-16)
 
 
