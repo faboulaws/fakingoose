@@ -8,7 +8,6 @@ An automatic mock data generator for mongoose using schema definition.
 ##  Install
 
 ```
-
 npm install fakingoose
 ```
 
@@ -31,6 +30,7 @@ const entityFactory = factory(model, options);
   + options.\<propertyName\>.type **\<string\>**: The sub-type for this field type. For example \<String\> schema type supports `email` ,  `firsname` and `lastname` .
   + `options.\<propertyName\>.populateWithSchema`: Uses a schema to generate mocks of related models
   + `options.\<propertyName\>.populateWithFactory`: Uses another factory to generate mocks of related models. This options provides more flexibility than `populateWithSchema`, taking advantage of custom behaviours  of factory via Factory options.
+  + `options.\<propertyName\>.size` **\<int\>**: (Array values only) When specified, will ensure that said array field has given number of elements. By default, this is set to 2.
 
 ## Usage example
 
@@ -357,6 +357,30 @@ const productSchema = new Schema({
 const productFactory = factory(productSchema, {
     price: {
         tostring: false
+    }
+});
+```
+
+## Generating a variable-sized array of items per field
+
+When generating array values, you can specify a `size` parameter to ensure the array field has that many elements. By default, this is set to 2.
+
+Example: Each new user will now have 10 new statuses to start.
+
+```js
+const userSchema = new mongoose.Schema({
+    email: String,
+    name: {
+        type: String,
+    },
+    activities: [{
+        type: String,
+    }],
+});
+
+const userFactory = factory(userSchema, {
+    activities: {
+        size: 10
     }
 });
 ```
