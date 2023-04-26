@@ -451,4 +451,9 @@ const mockWithoutTitle = myFactory.generate({}, { // here use custom options. We
 
 ## Mongoose version Support
 
-Version 4.x and 5.x are supported.
+ | Version | Supported          |
+ | ------- | ------------------ |
+ | 7.x     | :white_check_mark: |
+ | 6.x     | :white_check_mark: |
+ | 5.x     | :white_check_mark: |
+ | 4.x     | :white_check_mark: |
