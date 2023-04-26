@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/faboulaws/fakingoose/compare/v2.3.4...v3.0.0) (2023-04-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* better typescript support
+
+### Features
+
+* better typescript support ([c519e77](https://github.com/faboulaws/fakingoose/commit/c519e778cf093f290aff7aa805cfd353b59f4085))
+
 ### [2.3.4](https://github.com/faboulaws/fakingoose/compare/v2.3.3...v2.3.4) (2023-04-12)
 
 ### [2.3.3](https://github.com/faboulaws/fakingoose/compare/v2.3.2...v2.3.3) (2022-04-15)

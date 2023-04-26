@@ -1,24 +1,24 @@
 import {
   Model,
   Schema,
-  Document
+  SchemaDefinition
 } from 'mongoose';
 
 import { generate } from './generate';
-import { FactoryOptions, GlobalOptions, GlobalObjectIdOptions, GlobalDecimal128Options } from './types'
+import { GenericObject, FactoryOptions, GlobalOptions, GlobalObjectIdOptions, GlobalDecimal128Options } from './types';
 
-export class Mocker<T extends Document> {
-  schema: Schema<T>
+export class Mocker<T extends GenericObject = {}> {
+  schema:  Schema | Schema<T> | SchemaDefinition<T>
   globalOptions: GlobalOptions;
-  options: FactoryOptions;
+  options: FactoryOptions<T>;
 
-  constructor(model: Schema<T> | Model<T>, options: FactoryOptions = {}) {
+  constructor(model: Schema<T> | Model<T> | SchemaDefinition<T>, options: FactoryOptions<T> = {}) {
     this.schema = isModel(model) ? model.schema : model;
     this.options = options;
     this.globalOptions = {};
   }
 
-  setGlobalObjectIdOptions(options: GlobalObjectIdOptions) {
+   setGlobalObjectIdOptions(options: GlobalObjectIdOptions) {
     this.globalOptions.objectid = options;
     return this;
   }
@@ -28,7 +28,7 @@ export class Mocker<T extends Document> {
     return this;
   }
 
-  generate(staticFields: Record<string,unknown> = {}, overrideOptions: FactoryOptions = undefined) {
+  generate(staticFields: Record<string,unknown> = {}, overrideOptions: FactoryOptions<T> = undefined) {
     return generate<T>(this.schema, {
       options: overrideOptions || this.options,
       staticFields,
@@ -37,10 +37,10 @@ export class Mocker<T extends Document> {
   }
 }
 
-export function factory<T extends Document>(modelOrSchema: Schema<T> | Model<T>, options: FactoryOptions = {}): Mocker<T> {
+export function factory<T extends GenericObject >(modelOrSchema:  Schema<T> | Model<T>, options: FactoryOptions<T> = {}): Mocker<T> {
   return new Mocker<T>(modelOrSchema, options);
 }
 
-function isModel<T extends Document>(m: Model<T> | Schema<T>): m is Model<T> {
+function isModel<T>(m: Model<T> | Schema<T> | SchemaDefinition<T>): m is Model<T> {
   return (m as Model<T>).schema !== undefined;
 }

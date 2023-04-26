@@ -12,5 +12,9 @@
         "declaration": true,
         "outDir": "./dist",
         "rootDir": "./lib",
-    }
+        "types": ["node", "jest"],
+        "experimentalDecorators": true
+    },
+    
+    "files": ["global.d.ts"]
 }

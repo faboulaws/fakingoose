@@ -1,9 +1,11 @@
 import { Model, Schema, Document } from "mongoose";
 import { Mocker } from "./mocker";
 
-type ValueCallback = (mockObject: Document) => any;
+export type GenericObject = { [key: string]: any };
 
-export type MockerFieldOption = SkipFieldOptions | FieldValueOptions | StringFieldOptions | SizeFieldOptions | ObjectIdFieldOptions<any>;
+type ValueCallback<T> = (mockObject: T) => any;
+
+export type MockerFieldOption<T> = SkipFieldOptions  | FieldValueOptions<T> | StringFieldOptions | SizeFieldOptions | ObjectIdFieldOptions<any>;
 export interface SkipFieldOptions {
 
   /**
@@ -12,13 +14,13 @@ export interface SkipFieldOptions {
   skip: boolean;
 }
 
-export interface FieldValueOptions {
+export interface FieldValueOptions<T> {
   /**
     * If the value
     * is a function, then the function receives the current mock
     * object as first argument and returns a value
     */
-  value: (string | number | boolean | ValueCallback);
+  value: (string | number | boolean | ValueCallback<T> | GenericObject);
 }
 
 export interface StringFieldOptions {
@@ -36,31 +38,34 @@ export interface SizeFieldOptions {
   size: number;
 }
 
-export type ObjectIdFieldOptions<T extends Document> = PopulateWithFactory<T> | PopulateWithSchema<T>
+export type ObjectIdFieldOptions<T extends  GenericObject> = PopulateWithFactory<T> | PopulateWithSchema<T> | ObjectIdToStringOption
 
-export interface PopulateWithFactory<T extends Document> {
+export interface PopulateWithFactory<T extends GenericObject>{
   populateWithFactory: Mocker<T>
 }
 
-export interface PopulateWithSchema<T extends Document> {
-  populateWithSchema: Model<T> | Schema
+export interface PopulateWithSchema<T extends GenericObject> {
+  populateWithSchema: Model<T> | Schema<Document<T>>
+}
+export interface ObjectIdToStringOption {
+  tostring: boolean
 }
 
-export function isStringFieldOptions(o: MockerFieldOption): o is StringFieldOptions {
+export function isStringFieldOptions<T extends  Record<string, unknown>>(o: MockerFieldOption<T>): o is StringFieldOptions {
   return (o as StringFieldOptions).type !== undefined
 }
 
 
-export function isPopulateWithFactory<T extends Document>(o: MockerFieldOption): o is PopulateWithFactory<T> {
+export function isPopulateWithFactory<T>(o: MockerFieldOption<T>): o is PopulateWithFactory<T> {
   return (o as PopulateWithFactory<T>).populateWithFactory !== undefined
 }
 
-export function isPopulateWithSchema<T extends Document>(o: MockerFieldOption): o is PopulateWithSchema<T> {
+export function isPopulateWithSchema<T extends  Record<string, unknown>>(o: MockerFieldOption<T>): o is PopulateWithSchema<T> {
   return (o as PopulateWithSchema<T>).populateWithSchema !== undefined
 }
 
-export interface FactoryOptions {
-  [k: string]: MockerFieldOption;
+export interface FactoryOptions<T> {
+  [k: string]: MockerFieldOption<T> | FactoryOptions<T> | FactoryOptions<T>[];
 }
 
 export type GlobalDecimal128Options = {

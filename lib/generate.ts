@@ -4,14 +4,14 @@ import  * as get from 'lodash.get';
 import * as flatten from 'flat';
 import {
   Schema,
-  Document
+  SchemaDefinition
 } from 'mongoose';
 import  ObjectId from 'bson-objectid';
 import { factory } from './mocker';
 import { FactoryOptions, GlobalOptions, MockerFieldOption, isStringFieldOptions,  isPopulateWithFactory, isPopulateWithSchema } from './types';
 
 export type GeneratorOptions = {
-  options: MockerFieldOption,
+  options: MockerFieldOption<any>,
   staticFields: Record<string, unknown>,
   globalOptions: GlobalOptions
 }
@@ -239,20 +239,20 @@ const setIndirectValues = (parentPath, rootValue, indirectVals) => {
   return indirectVals;
 };
 
-type GenerateOptions<T extends Document> = {
-  options: FactoryOptions,
+type GenerateOptions<T> = {
+  options: FactoryOptions<T>,
   staticFields: Record<string, unknown>,
   globalOptions: GlobalOptions
 }
 
-export function generate<T extends Document>(schema: Schema<T>, opts: GenerateOptions<T>): T {
+export function generate<T>(schema: Schema | Schema<T> | SchemaDefinition<T>| SchemaDefinition<T>, opts: GenerateOptions<T>): T {
   const { options, staticFields, globalOptions } = opts;
   const mockObject = {};
   const fieldGeneration = [];
   const delayedFieldGeneration = [];
   const indirectValues = {};
   const indirectValuesTasks = {};
-  schema.eachPath((path) => {
+  (schema as Schema).eachPath((path) => {
     if (!path.includes('$*')) {
       if (typeof get(options, `${path}.value`) === 'function' || typeof get(options, `['${path}'].value`, undefined) === 'function') {
         delayedFieldGeneration.push(
